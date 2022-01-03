@@ -23,7 +23,7 @@ char sztestStringAA[] = "this is test | This is test | AA";
 
 TEST(BStringT, construct) {
   BString bstring1;
- 
+    
   std::string sTest("This is test | This is test | AA");
   BString bstring2(sTest.c_str());
   bstring1 = bstring2;
