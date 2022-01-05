@@ -20,7 +20,7 @@ char szTestStr[] = "This is test | This is test | ";
 char szTestStrDel[] = "Thistest | This is test | ";
 const char* szTestStrAA = "This is test | This is test | AA";
 char sztestStringAA[] = "this is test | This is test | AA";
-
+ 
 TEST(BStringT, construct) {
   BString bstring1;
 
