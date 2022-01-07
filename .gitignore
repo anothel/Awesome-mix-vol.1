@@ -31,5 +31,5 @@
 *.out
 *.app
 
-ByteString/.vscode
-ByteString/build
+.vscode
+build
