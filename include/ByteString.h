@@ -7,25 +7,16 @@
 
 #include <string>
 
-// #include <cstdarg>
-// #include <cstdio>
-// #include <cstdlib>
-// #include <cstring>
-
 namespace Awesome_mix_vol_1 {
 
 class ByteString {
 public:
-
-	//constructors/destructor
 	ByteString();
 	ByteString(const char *psz);
 	ByteString(const ByteString& stringSrc);
 
 	~ByteString();
 
-	//methods
-	
 	int GetLength() const;
 	bool IsEmpty()const;
 	void Empty();
@@ -38,9 +29,7 @@ public:
 	ByteString Left(int nCount) const;
 	ByteString Right(int nCount) const;
 
-	//additional functions
 	int GetMem() const;
-	//operators
 	
 	ByteString& operator=(const ByteString& stringSrc);
 	const ByteString& operator=(const unsigned char* psz);
@@ -49,13 +38,12 @@ public:
 	ByteString operator +(const ByteString& string);
 	ByteString& operator +=(const ByteString& string);
 	
-	//
 	void Print();
 private:
 	//variables
 	char* str;
-	int strSize;//size of memory of ByteString
-	int memSize;
+	int nDataLength;
+	int nAllocLength;
 };
 
 }  // namespace Awesome_mix_vol_1
