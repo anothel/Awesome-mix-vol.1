@@ -10,40 +10,14 @@
 namespace Awesome_mix_vol_1 {
 
 class ByteString {
-public:
-	ByteString();
-	ByteString(const char *psz);
-	ByteString(const ByteString& stringSrc);
+ public:
+  ByteString();
+  ~ByteString();
 
-	~ByteString();
-
-	int GetLength() const;
-	bool IsEmpty()const;
-	void Empty();
-	void SetAt(int nIndex, char ch);
-	int Compare(const ByteString& s) const;
-	int Find(char ch) const;
-	int Find(char *pszSub) const;
-
-	ByteString Mid(int nFirst, int nCount) const;
-	ByteString Left(int nCount) const;
-	ByteString Right(int nCount) const;
-
-	int GetMem() const;
-	
-	ByteString& operator=(const ByteString& stringSrc);
-	const ByteString& operator=(const unsigned char* psz);
-	char operator [](int indx);
-	bool operator ==(const ByteString& string);
-	ByteString operator +(const ByteString& string);
-	ByteString& operator +=(const ByteString& string);
-	
-	void Print();
-private:
-	//variables
-	char* str;
-	int nDataLength;
-	int nAllocLength;
+ private:
+  char* m_pszData;
+  int64_t nDataLength;
+  int64_t nAllocLength;
 };
 
 }  // namespace Awesome_mix_vol_1
