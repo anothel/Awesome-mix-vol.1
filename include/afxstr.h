@@ -2,21 +2,15 @@
 
 namespace awesome_ATL {
 
-class CC : public IAtlStringMgr {
-  virtual CStringData* Allocate(int nAllocLength, int nCharSize) throw() {
-
-  }
+class CSimpleStringMgr : public IAtlStringMgr {
+  virtual CStringData* Allocate(int nAllocLength, int nCharSize) throw() {}
 
   // Free an existing CStringData
-  virtual void Free(CStringData* pData) throw() {
-
-  }
+  virtual void Free(CStringData* pData) throw() {}
 
   // Change the size of an existing CStringData
   virtual CStringData* Reallocate(CStringData* pData, int nAllocLength,
-                                  int nCharSize) throw() {
-
-                                  }
+                                  int nCharSize) throw() {}
 
   // Get the CStringData for a Nil string
   virtual CStringData* GetNilString() throw() {}
@@ -25,21 +19,19 @@ class CC : public IAtlStringMgr {
 };
 }  // namespace awesome_ATL
 
-static awesome_ATL::CC a; 
+static awesome_ATL::CSimpleStringMgr simplestringmgr;
 
 awesome_ATL::IAtlStringMgr* AfxGetStringManager() {
-  return (awesome_ATL::IAtlStringMgr*)&a;
+  return (awesome_ATL::IAtlStringMgr*)&simplestringmgr;
 }
 
-template< typename _CharType = char, class StringIterator = awesome_ATL::ChTraitsCRT< _CharType > >
-class StrTrait : 
-	public StringIterator
-{
-public:
-	static awesome_ATL::IAtlStringMgr* GetDefaultManager() throw()
-	{
-		return( AfxGetStringManager() );
-	}
+template <typename _CharType = char,
+          class StringIterator = awesome_ATL::ChTraitsCRT<_CharType> >
+class StrTrait : public StringIterator {
+ public:
+  static awesome_ATL::IAtlStringMgr* GetDefaultManager() throw() {
+    return (AfxGetStringManager());
+  }
 };
 
-typedef awesome_ATL::CStringT< char, StrTrait< char > > CString;
+typedef awesome_ATL::CStringT<char, StrTrait<char> > CString;
