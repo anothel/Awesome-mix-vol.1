@@ -474,9 +474,8 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
                                 _In_ size_t nDestLen,
                                 _In_reads_opt_(nChars) const XCHAR* pchSrc,
                                 _In_ int nChars) throw() {
-printf("[jpk] pchSrc: %s \n", pchSrc);
-    memcpy(pchDest, pchSrc, nChars * sizeof(XCHAR));
     // memcpy_s(pchDest, nDestLen * sizeof(XCHAR), pchSrc, nChars * sizeof(XCHAR));
+    memcpy(pchDest, pchSrc, nChars * sizeof(XCHAR));
   }
 
   _ATL_INSECURE_DEPRECATE(
