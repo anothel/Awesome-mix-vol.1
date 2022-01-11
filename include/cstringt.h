@@ -114,6 +114,7 @@ public:
 	// Destructor
 	~CStringT() throw()
 	{
+printf("[jpk] ~CStringT() \n");
 	}
 
 	// Assignment operators

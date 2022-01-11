@@ -63,6 +63,8 @@ struct CStringData {
   void Release() throw() {
     ATLASSERT(nRefs != 0);
 
+printf("[jpk] nRefs: %d \n", nRefs);
+
     if (_InterlockedDecrement(&nRefs) <= 0) {
       pStringMgr->Free(this);
     }
@@ -155,6 +157,7 @@ class CSimpleStringT {
     CopyChars(m_pszData, nLength, pchSrc, nLength);
   }
   ~CSimpleStringT() throw() {
+printf("[jpk] ~CSimpleStringT() \n");
     CStringData* pData = GetData();
     pData->Release();
   }
@@ -232,6 +235,7 @@ class CSimpleStringT {
 
   void Append(_In_z_ PCXSTR pszSrc) { Append(pszSrc, StringLength(pszSrc)); }
   void Append(_In_reads_(nLength) PCXSTR pszSrc, _In_ int nLength) {
+printf("[jpk] pszSrc: %s, nLength: %d \n", pszSrc);
     // See comment in SetString() about why we do this
     UINT_PTR nOffset = pszSrc - GetString();
 
@@ -269,6 +273,8 @@ class CSimpleStringT {
     ReleaseBufferSetLength(nNewLength);
   }
   void Append(_In_ const CSimpleStringT& strSrc) {
+printf("[jpk] strSrc.GetString(): %s \n", strSrc.GetString());
+printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
     Append(strSrc.GetString(), strSrc.GetLength());
   }
   void Empty() throw() {
@@ -468,8 +474,9 @@ class CSimpleStringT {
                                 _In_ size_t nDestLen,
                                 _In_reads_opt_(nChars) const XCHAR* pchSrc,
                                 _In_ int nChars) throw() {
-    // memcpy(pchDest, nDestLen * sizeof(XCHAR), pchSrc, nChars * sizeof(XCHAR));
-    memcpy_s(pchDest, nDestLen * sizeof(XCHAR), pchSrc, nChars * sizeof(XCHAR));
+printf("[jpk] pchSrc: %s \n", pchSrc);
+    memcpy(pchDest, pchSrc, nChars * sizeof(XCHAR));
+    // memcpy_s(pchDest, nDestLen * sizeof(XCHAR), pchSrc, nChars * sizeof(XCHAR));
   }
 
   _ATL_INSECURE_DEPRECATE(
@@ -553,9 +560,11 @@ class CSimpleStringT {
     Attach(pNewData);
   }
   CStringData* GetData() const throw() {
+printf("[jpk] %s(%d) \n", __FILE__, __LINE__);
     return (reinterpret_cast<CStringData*>(m_pszData) - 1);
   }
   PXSTR PrepareWrite(_In_ int nLength) {
+printf("[jpk] %s(%d), nLength: %d \n", __FILE__, __LINE__, nLength);
     if (nLength < 0) AtlThrow("Invalid arguments");
 
     CStringData* pOldData = GetData();
