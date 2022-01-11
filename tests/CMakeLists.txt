@@ -12,8 +12,10 @@ file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cc
 )
 
-add_executable(ByteString_test ${SRC_FILES})
+add_executable(Awesome_mix_vol_1_test ${SRC_FILES})
 
-target_compile_features(ByteString_test PRIVATE cxx_std_11)
+target_compile_features(Awesome_mix_vol_1_test PRIVATE cxx_std_11)
 
-target_link_libraries(ByteString_test PRIVATE ByteString gtest gmock gtest_main)
+target_link_libraries(Awesome_mix_vol_1_test PRIVATE gtest gmock gtest_main)
+
+target_include_directories(Awesome_mix_vol_1_test PRIVATE ${CMAKE_SOURCE_DIR})
