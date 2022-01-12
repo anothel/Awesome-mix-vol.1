@@ -1,4 +1,4 @@
-#include "include/atlsimpstr.h"
+// #include "include/atlsimpstr.h"
 #include "include/atlalloc.h"
 
 namespace awesome_ATL {
@@ -6,16 +6,6 @@ namespace awesome_ATL {
 #ifndef _WIN32
 #define CSTRING_EXPLICIT explicit
 #endif  // _WIN32
-
-
-
-template< typename _CharType = char >
-class ChTraitsCRT :	public ChTraitsBase< _CharType >
-{
-public:
-
-};
-
 
 template <typename BaseType, class StringTraits>
 class CStringT : public CSimpleStringT<BaseType> {
@@ -114,6 +104,7 @@ public:
 	// Destructor
 	~CStringT() throw()
 	{
+printf("[jpk] ~CStringT() \n");
 	}
 
 	// Assignment operators
@@ -915,58 +906,6 @@ public:
 		return( Left( StringTraits::StringSpanExcluding( this->GetString(), pszCharSet ) ) );
 	}
 
-	// Format data using format string 'pszFormat'
-	void __cdecl Format(_In_z_ PCXSTR pszFormat, ...);
-
-	// Format data using format string loaded from resource 'nFormatID'
-	void __cdecl Format(_In_ UINT nFormatID, ...);
-
-	// Append formatted data using format string loaded from resource 'nFormatID'
-	void __cdecl AppendFormat(_In_ UINT nFormatID, ...);
-
-	// Append formatted data using format string 'pszFormat'
-	void __cdecl AppendFormat(_In_z_ PCXSTR pszFormat, ...);
-
-	void AppendFormatV(
-		_In_z_ PCXSTR pszFormat,
-		_In_ va_list args)
-	{
-		ATLASSERT( AtlIsValidString( pszFormat ) );
-		if(pszFormat == NULL)
-			AtlThrow("Invalid arguments");
-
-		int nCurrentLength = this->GetLength();
-		int nAppendLength = StringTraits::GetFormattedLength( pszFormat, args );
-
-		if (nAppendLength < 0)
-			AtlThrow("FAIL");
-
-		CStringT temp(pszFormat, this->GetManager());
-		PXSTR pszBuffer = this->GetBuffer( nCurrentLength+nAppendLength );
-		StringTraits::Format( pszBuffer+nCurrentLength,
-			nAppendLength+1, temp, args );
-		this->ReleaseBufferSetLength( nCurrentLength+nAppendLength );
-	}
-
-	void FormatV(
-		_In_z_ PCXSTR pszFormat,
-		_In_ va_list args)
-	{
-		ATLASSERT( AtlIsValidString( pszFormat ) );
-		if(pszFormat == NULL)
-			AtlThrow("Invalid arguments");
-
-		int nLength = StringTraits::GetFormattedLength( pszFormat, args );
-
-		if (nLength < 0)
-			AtlThrow("FAIL");
-
-		CStringT temp(pszFormat, this->GetManager());
-		PXSTR pszBuffer = this->GetBuffer( nLength );
-		StringTraits::Format( pszBuffer, nLength+1, temp, args );
-		this->ReleaseBufferSetLength( nLength );
-	}
-
 	friend CStringT operator+(
 		_In_ const CStringT& str1,
 		_In_ const CStringT& str2)
@@ -1018,30 +957,6 @@ public:
 
 	friend CStringT operator+(
 		_In_ _CSTRING_CHAR_T ch1,
-		_In_ const CStringT& str2)
-	{
-		CStringT strResult( str2.GetManager() );
-		XCHAR chTemp = XCHAR( ch1 );
-
-		CThisSimpleString::Concatenate( strResult, &chTemp, 1, str2, str2.GetLength() );
-
-		return( strResult );
-	}
-
-	friend CStringT operator+(
-		_In_ const CStringT& str1,
-		_In_ wchar_t ch2)
-	{
-		CStringT strResult( str1.GetManager() );
-		XCHAR chTemp = XCHAR( ch2 );
-
-		CThisSimpleString::Concatenate( strResult, str1, str1.GetLength(), &chTemp, 1 );
-
-		return( strResult );
-	}
-
-	friend CStringT operator+(
-		_In_ wchar_t ch1,
 		_In_ const CStringT& str2)
 	{
 		CStringT strResult( str2.GetManager() );

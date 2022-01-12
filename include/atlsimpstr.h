@@ -63,6 +63,8 @@ struct CStringData {
   void Release() throw() {
     ATLASSERT(nRefs != 0);
 
+printf("[jpk] nRefs: %d \n", nRefs);
+
     if (_InterlockedDecrement(&nRefs) <= 0) {
       pStringMgr->Free(this);
     }
@@ -79,6 +81,30 @@ struct CStringData {
       }
     }
   }
+};
+
+class CNilStringData :
+	public CStringData
+{
+public:
+	CNilStringData() throw()
+	{
+		pStringMgr = NULL;
+		nRefs = 2;  // Never gets freed by IAtlStringMgr
+		nDataLength = 0;
+		nAllocLength = 0;
+		achNil[0] = 0;
+		achNil[1] = 0;
+	}
+
+	void SetManager(_In_ IAtlStringMgr* pMgr) throw()
+	{
+		ATLASSERT( pStringMgr == NULL );
+		pStringMgr = pMgr;
+	}
+
+public:
+	wchar_t achNil[2];
 };
 
 template <typename TCharType>
@@ -117,18 +143,19 @@ class CSimpleStringT {
 
  public:
   explicit CSimpleStringT(_Inout_ IAtlStringMgr* pStringMgr) {
+log1;
     ATLENSURE(pStringMgr != NULL);
     CStringData* pData = pStringMgr->GetNilString();
     Attach(pData);
   }
 
   CSimpleStringT(_In_ const CSimpleStringT& strSrc) {
-    CStringData* pSrcData = strSrc.GetData();
-    CStringData* pNewData = CloneData(pSrcData);
-    Attach(pNewData);
+log1;
+    Attach(CloneData(strSrc.GetData()));
   }
 
   CSimpleStringT(_In_z_ PCXSTR pszSrc, _Inout_ IAtlStringMgr* pStringMgr) {
+log1;
     ATLENSURE(pStringMgr != NULL);
 
     int nLength = StringLength(pszSrc);
@@ -140,8 +167,10 @@ class CSimpleStringT {
     SetLength(nLength);
     CopyChars(m_pszData, nLength, pszSrc, nLength);
   }
+
   CSimpleStringT(_In_reads_(nLength) const XCHAR* pchSrc, _In_ int nLength,
                  _Inout_ IAtlStringMgr* pStringMgr) {
+log1;
     ATLENSURE(pStringMgr != NULL);
 
     if (pchSrc == NULL && nLength != 0) AtlThrow("Invalid arguments");
@@ -155,6 +184,7 @@ class CSimpleStringT {
     CopyChars(m_pszData, nLength, pchSrc, nLength);
   }
   ~CSimpleStringT() throw() {
+printf("[jpk] ~CSimpleStringT() \n");
     CStringData* pData = GetData();
     pData->Release();
   }
@@ -213,11 +243,6 @@ class CSimpleStringT {
 
     return (*this);
   }
-  CSimpleStringT& operator+=(_In_ wchar_t ch) {
-    AppendChar(XCHAR(ch));
-
-    return (*this);
-  }
 
   XCHAR operator[](_In_ int iChar) const {
     // Indexing the '\0' is OK
@@ -232,6 +257,7 @@ class CSimpleStringT {
 
   void Append(_In_z_ PCXSTR pszSrc) { Append(pszSrc, StringLength(pszSrc)); }
   void Append(_In_reads_(nLength) PCXSTR pszSrc, _In_ int nLength) {
+printf("[jpk] pszSrc: %s, nLength: %d \n", pszSrc);
     // See comment in SetString() about why we do this
     UINT_PTR nOffset = pszSrc - GetString();
 
@@ -269,6 +295,8 @@ class CSimpleStringT {
     ReleaseBufferSetLength(nNewLength);
   }
   void Append(_In_ const CSimpleStringT& strSrc) {
+printf("[jpk] strSrc.GetString(): %s \n", strSrc.GetString());
+printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
     Append(strSrc.GetString(), strSrc.GetLength());
   }
   void Empty() throw() {
@@ -468,8 +496,8 @@ class CSimpleStringT {
                                 _In_ size_t nDestLen,
                                 _In_reads_opt_(nChars) const XCHAR* pchSrc,
                                 _In_ int nChars) throw() {
-    // memcpy(pchDest, nDestLen * sizeof(XCHAR), pchSrc, nChars * sizeof(XCHAR));
-    memcpy_s(pchDest, nDestLen * sizeof(XCHAR), pchSrc, nChars * sizeof(XCHAR));
+    // memcpy_s(pchDest, nDestLen * sizeof(XCHAR), pchSrc, nChars * sizeof(XCHAR));
+    memcpy(pchDest, pchSrc, nChars * sizeof(XCHAR));
   }
 
   _ATL_INSECURE_DEPRECATE(
@@ -492,12 +520,6 @@ class CSimpleStringT {
     }
     return (int(strlen(psz)));
   }
-  static int __cdecl StringLength(_In_opt_z_ const wchar_t* psz) throw() {
-    if (psz == NULL) {
-      return (0);
-    }
-    return (int(wcslen(psz)));
-  }
   static int __cdecl StringLengthN(_In_reads_opt_z_(sizeInXChar)
                                        const char* psz,
                                    _In_ size_t sizeInXChar) throw() {
@@ -505,14 +527,6 @@ class CSimpleStringT {
       return (0);
     }
     return (int(strnlen(psz, sizeInXChar)));
-  }
-  static int __cdecl StringLengthN(_In_reads_opt_z_(sizeInXChar)
-                                       const wchar_t* psz,
-                                   _In_ size_t sizeInXChar) throw() {
-    if (psz == NULL) {
-      return (0);
-    }
-    return (int(wcsnlen(psz, sizeInXChar)));
   }
 
  protected:
@@ -536,6 +550,7 @@ class CSimpleStringT {
   void Attach(_Inout_ CStringData* pData) throw() {
     m_pszData = static_cast<PXSTR>(pData->data());
   }
+
   ATL_NOINLINE void Fork(_In_ int nLength) {
     CStringData* pOldData = GetData();
     int nOldLength = pOldData->nDataLength;
@@ -553,9 +568,11 @@ class CSimpleStringT {
     Attach(pNewData);
   }
   CStringData* GetData() const throw() {
+printf("[jpk] %s(%d) \n", __FILE__, __LINE__);
     return (reinterpret_cast<CStringData*>(m_pszData) - 1);
   }
   PXSTR PrepareWrite(_In_ int nLength) {
+printf("[jpk] %s(%d), nLength: %d \n", __FILE__, __LINE__, nLength);
     if (nLength < 0) AtlThrow("Invalid arguments");
 
     CStringData* pOldData = GetData();
