@@ -1,4 +1,4 @@
-#include <limits.h>
+#include <climits>
 
 #include "include/awesomedefine.h"
 
@@ -71,7 +71,7 @@ inline long AtlAdd(
 }
 
 template <typename T>
-inline T AtlAddThrow(
+inline long AtlAddThrow(
 	_In_ T tLeft,
 	_In_ T tRight)
 {
@@ -82,6 +82,88 @@ inline T AtlAddThrow(
 		AtlThrow(l);
 	}
 	return tResult;
+}
+
+/* generic but comparatively slow version */
+template<typename T>
+inline long AtlMultiply(
+	_Out_ T* ptResult,
+	_In_ T tLeft,
+	_In_ T tRight)
+{
+	/* avoid divide 0 */
+	if(tLeft==0)
+	{
+		*ptResult=0;
+		return S_OK;
+	}
+	if(::awesome_ATL::AtlLimits<T>::_Max/tLeft < tRight)
+	{
+		return ERROR_ARITHMETIC_OVERFLOW;
+	}
+	*ptResult= tLeft * tRight;
+	return S_OK;
+}
+
+/* fast version for 32 bit integers */
+template<>
+inline long AtlMultiply(
+	_Out_ int *piResult,
+	_In_ int iLeft,
+	_In_ int iRight)
+{
+	long i64Result=static_cast<long>(iLeft) * static_cast<long>(iRight);
+	if(i64Result>INT_MAX || i64Result < INT_MIN)
+	{
+		return ERROR_ARITHMETIC_OVERFLOW;
+	}
+	*piResult=static_cast<int>(i64Result);
+	return S_OK;
+}
+
+template<>
+inline long AtlMultiply(
+	_Out_ unsigned int *piResult,
+	_In_ unsigned int iLeft,
+	_In_ unsigned int iRight)
+{
+	unsigned long i64Result=static_cast<unsigned long>(iLeft) * static_cast<unsigned long>(iRight);
+	if(i64Result>UINT_MAX)
+	{
+		return ERROR_ARITHMETIC_OVERFLOW;
+	}
+	*piResult=static_cast<unsigned int>(i64Result);
+	return S_OK;
+}
+
+template<>
+inline long AtlMultiply(
+	_Out_ long *piResult,
+	_In_ long iLeft,
+	_In_ long iRight)
+{
+	long i64Result=static_cast<long>(iLeft) * static_cast<long>(iRight);
+	if(i64Result>LONG_MAX || i64Result < LONG_MIN)
+	{
+		return ERROR_ARITHMETIC_OVERFLOW;
+	}
+	*piResult=static_cast<long>(i64Result);
+	return S_OK;
+}
+
+template<>
+inline long AtlMultiply(
+	_Out_ unsigned long *piResult,
+	_In_ unsigned long iLeft,
+	_In_ unsigned long iRight)
+{
+	unsigned long i64Result=static_cast<unsigned long>(iLeft) * static_cast<unsigned long>(iRight);
+	if(i64Result>ULONG_MAX)
+	{
+		return ERROR_ARITHMETIC_OVERFLOW;
+	}
+	*piResult=static_cast<unsigned long>(i64Result);
+	return S_OK;
 }
 
 }
