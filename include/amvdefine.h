@@ -1,3 +1,8 @@
+// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+
+#ifndef AMVDEFINE_H_
+#define AMVDEFINE_H_
+
 #ifdef __GNUC__
 #define __interface class
 #define AMVASSERT(x) assert(x)
@@ -62,3 +67,5 @@ typedef ULONG_PTR DWORD_PTR, *PDWORD_PTR;
 #endif  // _WIN32
 
 #define log1 printf("[jpk] %s(%d), %s \n", __FILE__, __LINE__, __func__);
+
+#endif  // AMVDEFINE_H_

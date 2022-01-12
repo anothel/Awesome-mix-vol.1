@@ -1,3 +1,8 @@
+// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+
+#ifndef AMVALLOC_H_
+#define AMVALLOC_H_
+
 #include <climits>
 
 #include "include/amvdefine.h"
@@ -131,3 +136,5 @@ inline long AmvMultiply(_Out_ unsigned long *piResult, _In_ unsigned long iLeft,
 }
 
 }  // namespace AMV
+
+#endif  // AMVALLOC_H_

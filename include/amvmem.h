@@ -1,3 +1,8 @@
+// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+
+#ifndef AMVMEM_H_
+#define AMVMEM_H_
+
 #include <malloc.h>
 
 #include <cstdlib>
@@ -58,3 +63,5 @@ class CAmvHeap : public IAmvMemMgr {
   }
 };
 }  // namespace AMV
+
+#endif  // AMVMEM_H_

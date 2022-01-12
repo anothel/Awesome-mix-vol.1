@@ -1,3 +1,8 @@
+// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+
+#ifndef BSTRINGT_H_
+#define BSTRINGT_H_
+
 #include "include/amvalloc.h"
 
 namespace AMV {
@@ -908,7 +913,7 @@ class BStringT : public CSimpleStringT<BaseType> {
     bool bRet = false;
 
     if ((pv != NULL) && IS_INTRESOURCE(pv)) {
-      UINT nID = LOWORD(reinterpret_cast<DWORD_PTR>(pv));
+      UINT nID = LOWORD(reinterpret_cast<uint64_t>(pv));
       (nID);
     }
 
@@ -917,3 +922,5 @@ class BStringT : public CSimpleStringT<BaseType> {
 };
 
 }  // namespace AMV
+
+#endif  // BSTRINGT_H_

@@ -1,3 +1,8 @@
+// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+
+#ifndef AMVSIMPSTR_H_
+#define AMVSIMPSTR_H_
+
 #include <cassert>
 #include <climits>
 #include <cstdlib>
@@ -740,3 +745,5 @@ class CStrBufT {
 };
 
 }  // namespace AMV
+
+#endif  // AMVSIMPSTR_H_
