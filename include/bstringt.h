@@ -1,5 +1,4 @@
-// #include "include/atlsimpstr.h"
-#include "include/atlalloc.h"
+#include "include/amvalloc.h"
 
 namespace awesome_ATL {
 
@@ -8,7 +7,7 @@ namespace awesome_ATL {
 #endif  // _WIN32
 
 template <typename BaseType, class StringTraits>
-class CStringT : public CSimpleStringT<BaseType> {
+class BStringT : public CSimpleStringT<BaseType> {
  public:
   typedef CSimpleStringT<BaseType> CThisSimpleString;
   typedef StringTraits StrTraits;
@@ -17,16 +16,16 @@ class CStringT : public CSimpleStringT<BaseType> {
   typedef typename CThisSimpleString::PCXSTR PCXSTR;
 
  public:
-  CStringT() throw() : CThisSimpleString(StringTraits::GetDefaultManager()) {}
-  explicit CStringT(_In_ IAtlStringMgr* pStringMgr) throw()
+  BStringT() throw() : CThisSimpleString(StringTraits::GetDefaultManager()) {}
+  explicit BStringT(_In_ IAtlStringMgr* pStringMgr) throw()
       : CThisSimpleString(pStringMgr) {}
 
-  static void __cdecl Construct(_In_ CStringT* pString) {
-    new (pString) CStringT;
+  static void __cdecl Construct(_In_ BStringT* pString) {
+    new (pString) BStringT;
   }
 
   // Copy constructor
-  CStringT(_In_ const CStringT& strSrc) : CThisSimpleString(strSrc) {}
+  BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc) {}
 
   // Construct from CSimpleStringT
   operator CSimpleStringT<BaseType>&() {
@@ -34,30 +33,30 @@ class CStringT : public CSimpleStringT<BaseType> {
         CSimpleStringT<BaseType>*)this;
   }
 
-  CStringT(_In_ const CSimpleStringT<BaseType>& strSrc)
+  BStringT(_In_ const CSimpleStringT<BaseType>& strSrc)
       : CThisSimpleString(strSrc) {}
 
-  CStringT(_In_opt_z_ const XCHAR* pszSrc)
+  BStringT(_In_opt_z_ const XCHAR* pszSrc)
       : CThisSimpleString(StringTraits::GetDefaultManager()) {
     if (!CheckImplicitLoad(pszSrc)) {
       *this = pszSrc;
     }
   }
 
-  CStringT(_In_opt_z_ const XCHAR* pszSrc, _In_ IAtlStringMgr* pStringMgr)
+  BStringT(_In_opt_z_ const XCHAR* pszSrc, _In_ IAtlStringMgr* pStringMgr)
       : CThisSimpleString(pStringMgr) {
     if (!CheckImplicitLoad(pszSrc)) {
       *this = pszSrc;
     }
   }
 
-	CSTRING_EXPLICIT CStringT(_In_z_ const unsigned char* pszSrc) :
+	CSTRING_EXPLICIT BStringT(_In_z_ const unsigned char* pszSrc) :
 		CThisSimpleString( StringTraits::GetDefaultManager() )
 	{
 		*this = reinterpret_cast< const char* >( pszSrc );
 	}
 
-	CStringT(
+	BStringT(
 			_In_opt_z_ const unsigned char* pszSrc,
 			_In_ IAtlStringMgr* pStringMgr) :
 		CThisSimpleString( pStringMgr )
@@ -68,7 +67,7 @@ class CStringT : public CSimpleStringT<BaseType> {
 
 #define _CSTRING_CHAR_T char
 
-	CSTRING_EXPLICIT CStringT(
+	CSTRING_EXPLICIT BStringT(
 			_In_ _CSTRING_CHAR_T ch,
 			_In_ int nLength = 1) :
 		CThisSimpleString( StringTraits::GetDefaultManager() )
@@ -86,14 +85,14 @@ class CStringT : public CSimpleStringT<BaseType> {
 
 public:
 
-	CStringT(
+	BStringT(
 			_In_reads_(nLength) const XCHAR* pch,
 			_In_ int nLength) :
 		CThisSimpleString( pch, nLength, StringTraits::GetDefaultManager() )
 	{
 	}
 
-	CStringT(
+	BStringT(
 			_In_reads_(nLength) const XCHAR* pch,
 			_In_ int nLength,
 			_In_ IAtlStringMgr* pStringMgr) :
@@ -102,27 +101,26 @@ public:
 	}
 
 	// Destructor
-	~CStringT() throw()
+	~BStringT() throw()
 	{
-printf("[jpk] ~CStringT() \n");
 	}
 
 	// Assignment operators
-	CStringT& operator=(_In_ const CStringT& strSrc)
+	BStringT& operator=(_In_ const BStringT& strSrc)
 	{
 		CThisSimpleString::operator=( strSrc );
 
 		return( *this );
 	}
 
-	CStringT& operator=(_In_ const CSimpleStringT<BaseType>& strSrc)
+	BStringT& operator=(_In_ const CSimpleStringT<BaseType>& strSrc)
 	{
 		CThisSimpleString::operator=( strSrc );
 
 		return( *this );
 	}
 
-	CStringT& operator=(_In_opt_z_ PCXSTR pszSrc)
+	BStringT& operator=(_In_opt_z_ PCXSTR pszSrc)
 	{
 		CThisSimpleString::operator=( pszSrc );
 
@@ -131,7 +129,7 @@ printf("[jpk] ~CStringT() \n");
 
 
 
-	CStringT& operator=(_In_ XCHAR ch)
+	BStringT& operator=(_In_ XCHAR ch)
 	{
 		XCHAR ach[2] = { ch, 0 };
 
@@ -140,28 +138,28 @@ printf("[jpk] ~CStringT() \n");
 
 
 
-	CStringT& operator+=(_In_ const CThisSimpleString& str)
+	BStringT& operator+=(_In_ const CThisSimpleString& str)
 	{
 		CThisSimpleString::operator+=( str );
 
 		return( *this );
 	}
 
-	CStringT& operator+=(_In_z_ PCXSTR pszSrc)
+	BStringT& operator+=(_In_z_ PCXSTR pszSrc)
 	{
 		CThisSimpleString::operator+=( pszSrc );
 
 		return( *this );
 	}
 	template< int t_nSize >
-	CStringT& operator+=(_In_ const CStaticString< XCHAR, t_nSize >& strSrc)
+	BStringT& operator+=(_In_ const CStaticString< XCHAR, t_nSize >& strSrc)
 	{
 		CThisSimpleString::operator+=( strSrc );
 
 		return( *this );
 	}
 
-	CStringT& operator+=(_In_ XCHAR ch)
+	BStringT& operator+=(_In_ XCHAR ch)
 	{
 		CThisSimpleString::operator+=( ch );
 
@@ -169,7 +167,7 @@ printf("[jpk] ~CStringT() \n");
 	}
 
 
-	CStringT& operator+=(_In_ unsigned char ch)
+	BStringT& operator+=(_In_ unsigned char ch)
 	{
 		CThisSimpleString::operator+=( ch );
 
@@ -447,7 +445,7 @@ printf("[jpk] ~CStringT() \n");
 		return( nCount );
 	}
 
-	CStringT Tokenize(
+	BStringT Tokenize(
 		_In_z_ PCXSTR pszTokens,
 		_Inout_ int& iStart) const
 	{
@@ -460,7 +458,7 @@ printf("[jpk] ~CStringT() \n");
 		{
 			if (iStart < this->GetLength())
 			{
-				return( CStringT( this->GetString()+iStart, GetManager() ) );
+				return( BStringT( this->GetString()+iStart, GetManager() ) );
 			}
 		}
 		else
@@ -489,7 +487,7 @@ printf("[jpk] ~CStringT() \n");
 		// return empty string, done tokenizing
 		iStart = -1;
 
-		return( CStringT( GetManager() ) );
+		return( BStringT( GetManager() ) );
 	}
 
 	// find routines
@@ -566,7 +564,7 @@ printf("[jpk] ~CStringT() \n");
 	// manipulation
 
 	// Convert the string to uppercase
-	CStringT& MakeUpper()
+	BStringT& MakeUpper()
 	{
 		int nLength = this->GetLength();
 		PXSTR pszBuffer = this->GetBuffer( nLength );
@@ -577,7 +575,7 @@ printf("[jpk] ~CStringT() \n");
 	}
 
 	// Convert the string to lowercase
-	CStringT& MakeLower()
+	BStringT& MakeLower()
 	{
 		int nLength = this->GetLength();
 		PXSTR pszBuffer = this->GetBuffer( nLength );
@@ -588,7 +586,7 @@ printf("[jpk] ~CStringT() \n");
 	}
 
 	// Reverse the string
-	CStringT& MakeReverse()
+	BStringT& MakeReverse()
 	{
 		int nLength = this->GetLength();
 		PXSTR pszBuffer = this->GetBuffer( nLength );
@@ -601,7 +599,7 @@ printf("[jpk] ~CStringT() \n");
 	// trimming
 
 	// Remove all trailing whitespace
-	CStringT& TrimRight()
+	BStringT& TrimRight()
 	{
 		// find beginning of trailing spaces by starting
 		// at beginning (DBCS aware)
@@ -635,7 +633,7 @@ printf("[jpk] ~CStringT() \n");
 	}
 
 	// Remove all leading whitespace
-	CStringT& TrimLeft()
+	BStringT& TrimLeft()
 	{
 		// find first non-space character
 
@@ -662,19 +660,19 @@ printf("[jpk] ~CStringT() \n");
 	}
 
 	// Remove all leading and trailing whitespace
-	CStringT& Trim()
+	BStringT& Trim()
 	{
 		return( TrimRight().TrimLeft() );
 	}
 
 	// Remove all leading and trailing occurrences of character 'chTarget'
-	CStringT& Trim(_In_ XCHAR chTarget)
+	BStringT& Trim(_In_ XCHAR chTarget)
 	{
 		return( TrimRight( chTarget ).TrimLeft( chTarget ) );
 	}
 
 	// Remove all leading and trailing occurrences of any of the characters in the string 'pszTargets'
-	CStringT& Trim(_In_z_ PCXSTR pszTargets)
+	BStringT& Trim(_In_z_ PCXSTR pszTargets)
 	{
 		return( TrimRight( pszTargets ).TrimLeft( pszTargets ) );
 	}
@@ -682,7 +680,7 @@ printf("[jpk] ~CStringT() \n");
 	// trimming anything (either side)
 
 	// Remove all trailing occurrences of character 'chTarget'
-	CStringT& TrimRight(_In_ XCHAR chTarget)
+	BStringT& TrimRight(_In_ XCHAR chTarget)
 	{
 		// find beginning of trailing matches
 		// by starting at beginning (DBCS aware)
@@ -717,7 +715,7 @@ printf("[jpk] ~CStringT() \n");
 	}
 
 	// Remove all trailing occurrences of any of the characters in string 'pszTargets'
-	CStringT& TrimRight(_In_z_ PCXSTR pszTargets)
+	BStringT& TrimRight(_In_z_ PCXSTR pszTargets)
 	{
 		// if we're not trimming anything, we're not doing any work
 		if( (pszTargets == NULL) || (*pszTargets == 0) )
@@ -758,7 +756,7 @@ printf("[jpk] ~CStringT() \n");
 	}
 
 	// Remove all leading occurrences of character 'chTarget'
-	CStringT& TrimLeft(_In_ XCHAR chTarget)
+	BStringT& TrimLeft(_In_ XCHAR chTarget)
 	{
 		// find first non-matching character
 		PCXSTR psz = this->GetString();
@@ -784,7 +782,7 @@ printf("[jpk] ~CStringT() \n");
 	}
 
 	// Remove all leading occurrences of any of the characters in string 'pszTargets'
-	CStringT& TrimLeft(_In_z_ PCXSTR pszTargets)
+	BStringT& TrimLeft(_In_z_ PCXSTR pszTargets)
 	{
 		// if we're not trimming anything, we're not doing any work
 		if( (pszTargets == NULL) || (*pszTargets == 0) )
@@ -816,13 +814,13 @@ printf("[jpk] ~CStringT() \n");
 	// Very simple sub-string extraction
 
 	// Return the substring starting at index 'iFirst'
-	CStringT Mid(_In_ int iFirst) const
+	BStringT Mid(_In_ int iFirst) const
 	{
 		return( Mid( iFirst, this->GetLength()-iFirst ) );
 	}
 
 	// Return the substring starting at index 'iFirst', with length 'nCount'
-	CStringT Mid(
+	BStringT Mid(
 		_In_ int iFirst,
 		_In_ int nCount) const
 	{
@@ -851,11 +849,11 @@ printf("[jpk] ~CStringT() \n");
 			return( *this );
 		}
 
-		return( CStringT( this->GetString()+iFirst, nCount, GetManager() ) );
+		return( BStringT( this->GetString()+iFirst, nCount, GetManager() ) );
 	}
 
 	// Return the substring consisting of the rightmost 'nCount' characters
-	CStringT Right(_In_ int nCount) const
+	BStringT Right(_In_ int nCount) const
 	{
 		// nCount is in XCHARs
 		if (nCount < 0)
@@ -867,11 +865,11 @@ printf("[jpk] ~CStringT() \n");
 			return( *this );
 		}
 
-		return( CStringT( this->GetString()+nLength-nCount, nCount, GetManager() ) );
+		return( BStringT( this->GetString()+nLength-nCount, nCount, GetManager() ) );
 	}
 
 	// Return the substring consisting of the leftmost 'nCount' characters
-	CStringT Left(_In_ int nCount) const
+	BStringT Left(_In_ int nCount) const
 	{
 		// nCount is in XCHARs
 		if (nCount < 0)
@@ -883,11 +881,11 @@ printf("[jpk] ~CStringT() \n");
 			return( *this );
 		}
 
-		return( CStringT( this->GetString(), nCount, GetManager() ) );
+		return( BStringT( this->GetString(), nCount, GetManager() ) );
 	}
 
 	// Return the substring consisting of the leftmost characters in the set 'pszCharSet'
-	CStringT SpanIncluding(_In_z_ PCXSTR pszCharSet) const
+	BStringT SpanIncluding(_In_z_ PCXSTR pszCharSet) const
 	{
 		ATLASSERT( AtlIsValidString( pszCharSet ) );
 		if(pszCharSet == NULL)
@@ -897,7 +895,7 @@ printf("[jpk] ~CStringT() \n");
 	}
 
 	// Return the substring consisting of the leftmost characters not in the set 'pszCharSet'
-	CStringT SpanExcluding(_In_z_ PCXSTR pszCharSet) const
+	BStringT SpanExcluding(_In_z_ PCXSTR pszCharSet) const
 	{
 		ATLASSERT( AtlIsValidString( pszCharSet ) );
 		if(pszCharSet == NULL)
@@ -906,33 +904,33 @@ printf("[jpk] ~CStringT() \n");
 		return( Left( StringTraits::StringSpanExcluding( this->GetString(), pszCharSet ) ) );
 	}
 
-	friend CStringT operator+(
-		_In_ const CStringT& str1,
-		_In_ const CStringT& str2)
+	friend BStringT operator+(
+		_In_ const BStringT& str1,
+		_In_ const BStringT& str2)
 	{
-		CStringT strResult( str1.GetManager() );
+		BStringT strResult( str1.GetManager() );
 
 		CThisSimpleString::Concatenate( strResult, str1, str1.GetLength(), str2, str2.GetLength() );
 
 		return( strResult );
 	}
 
-	friend CStringT operator+(
-		_In_ const CStringT& str1,
+	friend BStringT operator+(
+		_In_ const BStringT& str1,
 		_In_z_ PCXSTR psz2)
 	{
-		CStringT strResult( str1.GetManager() );
+		BStringT strResult( str1.GetManager() );
 
 		CThisSimpleString::Concatenate( strResult, str1, str1.GetLength(), psz2, CThisSimpleString::StringLength( psz2 ) );
 
 		return( strResult );
 	}
 
-	friend CStringT operator+(
+	friend BStringT operator+(
 		_In_z_ PCXSTR psz1,
-		_In_ const CStringT& str2)
+		_In_ const BStringT& str2)
 	{
-		CStringT strResult( str2.GetManager() );
+		BStringT strResult( str2.GetManager() );
 
 		CThisSimpleString::Concatenate( strResult, psz1, CThisSimpleString::StringLength( psz1 ), str2, str2.GetLength() );
 
@@ -943,11 +941,11 @@ printf("[jpk] ~CStringT() \n");
 #define _CSTRING_CHAR_T char
 
 
-	friend CStringT operator+(
-		_In_ const CStringT& str1,
+	friend BStringT operator+(
+		_In_ const BStringT& str1,
 		_In_ _CSTRING_CHAR_T ch2)
 	{
-		CStringT strResult( str1.GetManager() );
+		BStringT strResult( str1.GetManager() );
 		XCHAR chTemp = XCHAR( ch2 );
 
 		CThisSimpleString::Concatenate( strResult, str1, str1.GetLength(), &chTemp, 1 );
@@ -955,11 +953,11 @@ printf("[jpk] ~CStringT() \n");
 		return( strResult );
 	}
 
-	friend CStringT operator+(
+	friend BStringT operator+(
 		_In_ _CSTRING_CHAR_T ch1,
-		_In_ const CStringT& str2)
+		_In_ const BStringT& str2)
 	{
-		CStringT strResult( str2.GetManager() );
+		BStringT strResult( str2.GetManager() );
 		XCHAR chTemp = XCHAR( ch1 );
 
 		CThisSimpleString::Concatenate( strResult, &chTemp, 1, str2, str2.GetLength() );
@@ -968,14 +966,14 @@ printf("[jpk] ~CStringT() \n");
 	}
 
 	friend bool operator==(
-		_In_ const CStringT& str1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str1,
+		_In_ const BStringT& str2) throw()
 	{
 		return( str1.Compare( str2 ) == 0 );
 	}
 
 	friend bool operator==(
-		_In_ const CStringT& str1,
+		_In_ const BStringT& str1,
 		_In_z_ PCXSTR psz2) throw()
 	{
 		return( str1.Compare( psz2 ) == 0 );
@@ -983,20 +981,20 @@ printf("[jpk] ~CStringT() \n");
 
 	friend bool operator==(
 		_In_z_ PCXSTR psz1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str2) throw()
 	{
 		return( str2.Compare( psz1 ) == 0 );
 	}
 
 	friend bool operator!=(
-		_In_ const CStringT& str1,
-		_In_ const CStringT& str2 ) throw()
+		_In_ const BStringT& str1,
+		_In_ const BStringT& str2 ) throw()
 	{
 		return( str1.Compare( str2 ) != 0 );
 	}
 
 	friend bool operator!=(
-		_In_ const CStringT& str1,
+		_In_ const BStringT& str1,
 		_In_z_ PCXSTR psz2) throw()
 	{
 		return( str1.Compare( psz2 ) != 0 );
@@ -1004,20 +1002,20 @@ printf("[jpk] ~CStringT() \n");
 
 	friend bool operator!=(
 		_In_z_ PCXSTR psz1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str2) throw()
 	{
 		return( str2.Compare( psz1 ) != 0 );
 	}
 
 	friend bool operator<(
-		_In_ const CStringT& str1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str1,
+		_In_ const BStringT& str2) throw()
 	{
 		return( str1.Compare( str2 ) < 0 );
 	}
 
 	friend bool operator<(
-		_In_ const CStringT& str1,
+		_In_ const BStringT& str1,
 		_In_z_ PCXSTR psz2 ) throw()
 	{
 		return( str1.Compare( psz2 ) < 0 );
@@ -1025,20 +1023,20 @@ printf("[jpk] ~CStringT() \n");
 
 	friend bool operator<(
 		_In_z_ PCXSTR psz1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str2) throw()
 	{
 		return( str2.Compare( psz1 ) > 0 );
 	}
 
 	friend bool operator>(
-		_In_ const CStringT& str1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str1,
+		_In_ const BStringT& str2) throw()
 	{
 		return( str1.Compare( str2 ) > 0 );
 	}
 
 	friend bool operator>(
-		_In_ const CStringT& str1,
+		_In_ const BStringT& str1,
 		_In_z_ PCXSTR psz2) throw()
 	{
 		return( str1.Compare( psz2 ) > 0 );
@@ -1046,20 +1044,20 @@ printf("[jpk] ~CStringT() \n");
 
 	friend bool operator>(
 		_In_z_ PCXSTR psz1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str2) throw()
 	{
 		return( str2.Compare( psz1 ) < 0 );
 	}
 
 	friend bool operator<=(
-		_In_ const CStringT& str1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str1,
+		_In_ const BStringT& str2) throw()
 	{
 		return( str1.Compare( str2 ) <= 0 );
 	}
 
 	friend bool operator<=(
-		_In_ const CStringT& str1,
+		_In_ const BStringT& str1,
 		_In_z_ PCXSTR psz2) throw()
 	{
 		return( str1.Compare( psz2 ) <= 0 );
@@ -1067,20 +1065,20 @@ printf("[jpk] ~CStringT() \n");
 
 	friend bool operator<=(
 		_In_z_ PCXSTR psz1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str2) throw()
 	{
 		return( str2.Compare( psz1 ) >= 0 );
 	}
 
 	friend bool operator>=(
-		_In_ const CStringT& str1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str1,
+		_In_ const BStringT& str2) throw()
 	{
 		return( str1.Compare( str2 ) >= 0 );
 	}
 
 	friend bool operator>=(
-		_In_ const CStringT& str1,
+		_In_ const BStringT& str1,
 		_In_z_ PCXSTR psz2) throw()
 	{
 		return( str1.Compare( psz2 ) >= 0 );
@@ -1088,20 +1086,20 @@ printf("[jpk] ~CStringT() \n");
 
 	friend bool operator>=(
 		_In_z_ PCXSTR psz1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str2) throw()
 	{
 		return( str2.Compare( psz1 ) <= 0 );
 	}
 
 	friend bool operator==(
 		_In_ XCHAR ch1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str2) throw()
 	{
 		return( (str2.GetLength() == 1) && (str2[0] == ch1) );
 	}
 
 	friend bool operator==(
-		_In_ const CStringT& str1,
+		_In_ const BStringT& str1,
 		_In_ XCHAR ch2) throw()
 	{
 		return( (str1.GetLength() == 1) && (str1[0] == ch2) );
@@ -1109,13 +1107,13 @@ printf("[jpk] ~CStringT() \n");
 
 	friend bool operator!=(
 		_In_ XCHAR ch1,
-		_In_ const CStringT& str2) throw()
+		_In_ const BStringT& str2) throw()
 	{
 		return( (str2.GetLength() != 1) || (str2[0] != ch1) );
 	}
 
 	friend bool operator!=(
-		_In_ const CStringT& str1,
+		_In_ const BStringT& str1,
 		_In_ XCHAR ch2) throw()
 	{
 		return( (str1.GetLength() != 1) || (str1[0] != ch2) );
@@ -1130,8 +1128,6 @@ private:
 		{
 			UINT nID = LOWORD( reinterpret_cast< DWORD_PTR >( pv ) );
 			(nID);
-
-			// ATLTRACE( atlTraceString, 2, _T( "Warning: LoadString(%u) not supported under the current WINAPI_FAMILY.\n" ), nID );
 		}
 
 		return( bRet );
