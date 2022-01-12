@@ -1,10 +1,10 @@
 #include <cctype>
 #include <cstring>
 
-#include "include/atlmem.h"
-#include "include/atlsimpstr.h"
-#include "include/awesomedefine.h"
-#include "include/cstringt.h"
+#include "include/amvmem.h"
+#include "include/amvsimpstr.h"
+#include "include/amvdefine.h"
+#include "include/bstringt.h"
 
 namespace awesome_ATL {
 
@@ -35,14 +35,14 @@ public:
 	}
 // IAtlStringMgr
 public:
-	virtual CStringData* Allocate(
+	virtual BStringData* Allocate(
 		_In_ int nChars,
 		_In_ int nCharSize) throw()
 	{
 		ATLENSURE_RETURN_VAL( nChars>=0, NULL );
 
 		size_t nTotalSize;
-		CStringData* pData;
+		BStringData* pData;
 		size_t nDataBytes;
 
 		if( FAILED(::awesome_ATL::AtlAdd(&nChars, nChars, 1)) )
@@ -54,11 +54,11 @@ public:
 		ATLENSURE_RETURN_VAL( nChars<=nAlignedChars, NULL );
 
 		if(	FAILED(::awesome_ATL::AtlMultiply(&nDataBytes, static_cast<size_t>(nAlignedChars), static_cast<size_t>(nCharSize))) ||
-			FAILED(::awesome_ATL::AtlAdd(&nTotalSize, static_cast<size_t>(sizeof( CStringData )), nDataBytes)))
+			FAILED(::awesome_ATL::AtlAdd(&nTotalSize, static_cast<size_t>(sizeof( BStringData )), nDataBytes)))
 		{
 			return NULL;
 		}
-		pData = static_cast< CStringData* >( m_pMemMgr->Allocate( nTotalSize ) );
+		pData = static_cast< BStringData* >( m_pMemMgr->Allocate( nTotalSize ) );
 		if( pData == NULL )
 		{
 			return( NULL );
@@ -70,22 +70,22 @@ public:
 
 		return( pData );
 	}
-	virtual void Free(_In_ CStringData* pData) throw()
+	virtual void Free(_In_ BStringData* pData) throw()
 	{
 		ATLASSUME(pData != NULL);
 		ATLASSERT(pData->pStringMgr == this);
 
 		m_pMemMgr->Free( pData );
 	}
-	virtual CStringData* Reallocate(
-		_Inout_ CStringData* pData,
+	virtual BStringData* Reallocate(
+		_Inout_ BStringData* pData,
 		_In_ int nChars,
 		_In_ int nCharSize) throw()
 	{
 		ATLENSURE_RETURN_VAL( nChars>=0, NULL );
 		ATLASSERT( pData->pStringMgr == this );
 
-		CStringData* pNewData;
+		BStringData* pNewData;
 		ULONG nTotalSize;
 		ULONG nDataBytes;
 
@@ -98,11 +98,11 @@ public:
 		ATLENSURE_RETURN_VAL( nChars<=nAlignedChars, NULL );
 
 		if(	FAILED(::awesome_ATL::AtlMultiply(&nDataBytes, static_cast<ULONG>(nAlignedChars), static_cast<ULONG>(nCharSize))) ||
-			FAILED(::awesome_ATL::AtlAdd(&nTotalSize, static_cast<ULONG>(sizeof( CStringData )), nDataBytes)))
+			FAILED(::awesome_ATL::AtlAdd(&nTotalSize, static_cast<ULONG>(sizeof( BStringData )), nDataBytes)))
 		{
 			return NULL;
 		}
-		pNewData = static_cast< CStringData* >( m_pMemMgr->Reallocate( pData, nTotalSize ) );
+		pNewData = static_cast< BStringData* >( m_pMemMgr->Reallocate( pData, nTotalSize ) );
 		if( pNewData == NULL )
 		{
 			return NULL;
@@ -111,7 +111,7 @@ public:
 
 		return pNewData;
 	}
-	virtual CStringData* GetNilString() throw()
+	virtual BStringData* GetNilString() throw()
 	{
 		m_nil.AddRef();
 		return &m_nil;
@@ -411,8 +411,8 @@ public:
 	}
 };
 
-typedef CStringT< char, StrTraitATL< char > > CAtlString;
+typedef BStringT< char, StrTraitATL< char > > CAtlString;
 
 
 }
-typedef awesome_ATL::CAtlString CString;
+typedef awesome_ATL::CAtlString BString;

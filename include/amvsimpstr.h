@@ -3,33 +3,33 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "include/awesomedefine.h"
+#include "include/amvdefine.h"
 #include "include/salieri.h"
 
 namespace awesome_ATL {
 
-struct CStringData;
+struct BStringData;
 
 __interface IAtlStringMgr {
  public:
-  // Allocate a new CStringData
-  virtual CStringData* Allocate(int nAllocLength, int nCharSize) throw() = 0;
+  // Allocate a new BStringData
+  virtual BStringData* Allocate(int nAllocLength, int nCharSize) throw() = 0;
 
-  // Free an existing CStringData
-  virtual void Free(CStringData * pData) throw() = 0;
+  // Free an existing BStringData
+  virtual void Free(BStringData * pData) throw() = 0;
 
-  // Change the size of an existing CStringData
-  virtual CStringData* Reallocate(CStringData * pData, int nAllocLength,
+  // Change the size of an existing BStringData
+  virtual BStringData* Reallocate(BStringData * pData, int nAllocLength,
                                   int nCharSize) throw() = 0;
 
-  // Get the CStringData for a Nil string
-  virtual CStringData* GetNilString() throw() = 0;
+  // Get the BStringData for a Nil string
+  virtual BStringData* GetNilString() throw() = 0;
 
   virtual IAtlStringMgr* Clone() throw() = 0;
 };
 
-struct CStringData {
-  // String manager for this CStringData
+struct BStringData {
+  // String manager for this BStringData
   IAtlStringMgr* pStringMgr;
   // Length of currently used data in chars (not including terminating null)
   int nDataLength;
@@ -63,8 +63,6 @@ struct CStringData {
   void Release() throw() {
     ATLASSERT(nRefs != 0);
 
-printf("[jpk] nRefs: %d \n", nRefs);
-
     if (_InterlockedDecrement(&nRefs) <= 0) {
       pStringMgr->Free(this);
     }
@@ -84,7 +82,7 @@ printf("[jpk] nRefs: %d \n", nRefs);
 };
 
 class CNilStringData :
-	public CStringData
+	public BStringData
 {
 public:
 	CNilStringData() throw()
@@ -143,23 +141,23 @@ class CSimpleStringT {
 
  public:
   explicit CSimpleStringT(_Inout_ IAtlStringMgr* pStringMgr) {
-log1;
+
     ATLENSURE(pStringMgr != NULL);
-    CStringData* pData = pStringMgr->GetNilString();
+    BStringData* pData = pStringMgr->GetNilString();
     Attach(pData);
   }
 
   CSimpleStringT(_In_ const CSimpleStringT& strSrc) {
-log1;
+
     Attach(CloneData(strSrc.GetData()));
   }
 
   CSimpleStringT(_In_z_ PCXSTR pszSrc, _Inout_ IAtlStringMgr* pStringMgr) {
-log1;
+
     ATLENSURE(pStringMgr != NULL);
 
     int nLength = StringLength(pszSrc);
-    CStringData* pData = pStringMgr->Allocate(nLength, sizeof(XCHAR));
+    BStringData* pData = pStringMgr->Allocate(nLength, sizeof(XCHAR));
     if (pData == NULL) {
       ThrowMemoryException();
     }
@@ -170,12 +168,12 @@ log1;
 
   CSimpleStringT(_In_reads_(nLength) const XCHAR* pchSrc, _In_ int nLength,
                  _Inout_ IAtlStringMgr* pStringMgr) {
-log1;
+
     ATLENSURE(pStringMgr != NULL);
 
     if (pchSrc == NULL && nLength != 0) AtlThrow("Invalid arguments");
 
-    CStringData* pData = pStringMgr->Allocate(nLength, sizeof(XCHAR));
+    BStringData* pData = pStringMgr->Allocate(nLength, sizeof(XCHAR));
     if (pData == NULL) {
       ThrowMemoryException();
     }
@@ -183,9 +181,9 @@ log1;
     SetLength(nLength);
     CopyChars(m_pszData, nLength, pchSrc, nLength);
   }
+
   ~CSimpleStringT() throw() {
-printf("[jpk] ~CSimpleStringT() \n");
-    CStringData* pData = GetData();
+    BStringData* pData = GetData();
     pData->Release();
   }
 
@@ -194,14 +192,14 @@ printf("[jpk] ~CSimpleStringT() \n");
   }
 
   CSimpleStringT& operator=(_In_ const CSimpleStringT& strSrc) {
-    CStringData* pSrcData = strSrc.GetData();
-    CStringData* pOldData = GetData();
+    BStringData* pSrcData = strSrc.GetData();
+    BStringData* pOldData = GetData();
     if (pSrcData != pOldData) {
       if (pOldData->IsLocked() ||
           pSrcData->pStringMgr != pOldData->pStringMgr) {
         SetString(strSrc.GetString(), strSrc.GetLength());
       } else {
-        CStringData* pNewData = CloneData(pSrcData);
+        BStringData* pNewData = CloneData(pSrcData);
         pOldData->Release();
         Attach(pNewData);
       }
@@ -256,8 +254,8 @@ printf("[jpk] ~CSimpleStringT() \n");
   operator PCXSTR() const throw() { return (m_pszData); }
 
   void Append(_In_z_ PCXSTR pszSrc) { Append(pszSrc, StringLength(pszSrc)); }
+
   void Append(_In_reads_(nLength) PCXSTR pszSrc, _In_ int nLength) {
-printf("[jpk] pszSrc: %s, nLength: %d \n", pszSrc);
     // See comment in SetString() about why we do this
     UINT_PTR nOffset = pszSrc - GetString();
 
@@ -287,6 +285,7 @@ printf("[jpk] pszSrc: %s, nLength: %d \n", pszSrc);
     CopyChars(pszBuffer + nOldLength, nLength, pszSrc, nLength);
     ReleaseBufferSetLength(nNewLength);
   }
+
   void AppendChar(_In_ XCHAR ch) {
     UINT nOldLength = GetLength();
     int nNewLength = nOldLength + 1;
@@ -294,13 +293,13 @@ printf("[jpk] pszSrc: %s, nLength: %d \n", pszSrc);
     pszBuffer[nOldLength] = ch;
     ReleaseBufferSetLength(nNewLength);
   }
+
   void Append(_In_ const CSimpleStringT& strSrc) {
-printf("[jpk] strSrc.GetString(): %s \n", strSrc.GetString());
-printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
     Append(strSrc.GetString(), strSrc.GetLength());
   }
+
   void Empty() throw() {
-    CStringData* pOldData = GetData();
+    BStringData* pOldData = GetData();
     IAtlStringMgr* pStringMgr = pOldData->pStringMgr;
     if (pOldData->nDataLength == 0) {
       return;
@@ -311,12 +310,13 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
       SetLength(0);
     } else {
       pOldData->Release();
-      CStringData* pNewData = pStringMgr->GetNilString();
+      BStringData* pNewData = pStringMgr->GetNilString();
       Attach(pNewData);
     }
   }
+
   void FreeExtra() {
-    CStringData* pOldData = GetData();
+    BStringData* pOldData = GetData();
     int nLength = pOldData->nDataLength;
     IAtlStringMgr* pStringMgr = pOldData->pStringMgr;
     if (pOldData->nAllocLength == nLength) {
@@ -325,7 +325,7 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
 
     // Don't reallocate a locked buffer that's shrinking
     if (!pOldData->IsLocked()) {
-      CStringData* pNewData = pStringMgr->Allocate(nLength, sizeof(XCHAR));
+      BStringData* pNewData = pStringMgr->Allocate(nLength, sizeof(XCHAR));
       if (pNewData == NULL) {
         SetLength(nLength);
         return;
@@ -341,6 +341,7 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
   }
 
   int GetAllocLength() const throw() { return (GetData()->nAllocLength); }
+
   XCHAR GetAt(_In_ int iChar) const {
     // Indexing the '\0' is OK
     ATLASSERT((iChar >= 0) && (iChar <= GetLength()));
@@ -348,23 +349,27 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
 
     return (m_pszData[iChar]);
   }
+
   PXSTR GetBuffer() {
-    CStringData* pData = GetData();
+    BStringData* pData = GetData();
     if (pData->IsShared()) {
       Fork(pData->nDataLength);
     }
 
     return (m_pszData);
   }
+
   PXSTR GetBuffer(_In_ int nMinBufferLength) {
     return (PrepareWrite(nMinBufferLength));
   }
+
   PXSTR GetBufferSetLength(_In_ int nLength) {
     PXSTR pszBuffer = GetBuffer(nLength);
     SetLength(nLength);
 
     return (pszBuffer);
   }
+
   int GetLength() const throw() { return (GetData()->nDataLength); }
   IAtlStringMgr* GetManager() const throw() {
     IAtlStringMgr* pStringMgr = GetData()->pStringMgr;
@@ -372,9 +377,10 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
   }
 
   PCXSTR GetString() const throw() { return (m_pszData); }
+
   bool IsEmpty() const throw() { return (GetLength() == 0); }
   PXSTR LockBuffer() {
-    CStringData* pData = GetData();
+    BStringData* pData = GetData();
     if (pData->IsShared()) {
       Fork(pData->nDataLength);
       // Do it again, because the fork might have changed it
@@ -384,11 +390,14 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
 
     return (m_pszData);
   }
+
   void UnlockBuffer() throw() {
-    CStringData* pData = GetData();
+    BStringData* pData = GetData();
     pData->Unlock();
   }
+
   void Preallocate(_In_ int nLength) { PrepareWrite(nLength); }
+
   void ReleaseBuffer(_In_ int nNewLength = -1) {
     if (nNewLength == -1) {
       int nAlloc = GetData()->nAllocLength;
@@ -396,15 +405,18 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
     }
     SetLength(nNewLength);
   }
+
   void ReleaseBufferSetLength(_In_ int nNewLength) {
     ATLASSERT(nNewLength >= 0);
     SetLength(nNewLength);
   }
+
   void Truncate(_In_ int nNewLength) {
     ATLASSERT(nNewLength <= GetLength());
     GetBuffer(nNewLength);
     ReleaseBufferSetLength(nNewLength);
   }
+
   void SetAt(_In_ int iChar, _In_ XCHAR ch) {
     ATLASSERT((iChar >= 0) && (iChar < GetLength()));
 
@@ -415,17 +427,20 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
     pszBuffer[iChar] = ch;
     ReleaseBufferSetLength(nLength);
   }
+
   void SetManager(_Inout_ IAtlStringMgr* pStringMgr) {
     ATLASSERT(IsEmpty());
 
-    CStringData* pData = GetData();
+    BStringData* pData = GetData();
     pData->Release();
     pData = pStringMgr->GetNilString();
     Attach(pData);
   }
+
   void SetString(_In_opt_z_ PCXSTR pszSrc) {
     SetString(pszSrc, StringLength(pszSrc));
   }
+
   void SetString(_In_reads_opt_(nLength) PCXSTR pszSrc, _In_ int nLength) {
     if (nLength == 0) {
       Empty();
@@ -491,13 +506,14 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
       memcpy(pchDest, pchSrc, nChars * sizeof(XCHAR));
     }
   }
+
   static void __cdecl CopyChars(_Out_writes_to_(nDestLen, nChars)
                                     XCHAR* pchDest,
                                 _In_ size_t nDestLen,
                                 _In_reads_opt_(nChars) const XCHAR* pchSrc,
                                 _In_ int nChars) throw() {
-    // memcpy_s(pchDest, nDestLen * sizeof(XCHAR), pchSrc, nChars * sizeof(XCHAR));
     memcpy(pchDest, pchSrc, nChars * sizeof(XCHAR));
+    // memcpy_s(pchDest, nDestLen * sizeof(XCHAR), pchSrc, nChars * sizeof(XCHAR));
   }
 
   _ATL_INSECURE_DEPRECATE(
@@ -508,18 +524,21 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
                                           _In_ int nChars) throw() {
     memmove(pchDest, pchSrc, nChars * sizeof(XCHAR));
   }
+
   static void __cdecl CopyCharsOverlapped(
       _Out_writes_to_(nDestLen, nDestLen) XCHAR* pchDest, _In_ size_t nDestLen,
       _In_reads_(nChars) const XCHAR* pchSrc, _In_ int nChars) throw() {
     memmove_s(pchDest, nDestLen * sizeof(XCHAR), pchSrc,
               nChars * sizeof(XCHAR));
   }
+
   static int __cdecl StringLength(_In_opt_z_ const char* psz) throw() {
     if (psz == NULL) {
       return (0);
     }
     return (int(strlen(psz)));
   }
+
   static int __cdecl StringLengthN(_In_reads_opt_z_(sizeInXChar)
                                        const char* psz,
                                    _In_ size_t sizeInXChar) throw() {
@@ -541,20 +560,21 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
     CopyChars(pszBuffer + nLength1, nLength2, psz2, nLength2);
     strResult.ReleaseBufferSetLength(nNewLength);
   }
+
   ATL_NOINLINE __declspec(noreturn) static void __cdecl ThrowMemoryException() {
     AtlThrow("Out of memory");
   }
 
   // Implementation
  private:
-  void Attach(_Inout_ CStringData* pData) throw() {
+  void Attach(_Inout_ BStringData* pData) throw() {
     m_pszData = static_cast<PXSTR>(pData->data());
   }
 
   ATL_NOINLINE void Fork(_In_ int nLength) {
-    CStringData* pOldData = GetData();
+    BStringData* pOldData = GetData();
     int nOldLength = pOldData->nDataLength;
-    CStringData* pNewData =
+    BStringData* pNewData =
         pOldData->pStringMgr->Clone()->Allocate(nLength, sizeof(XCHAR));
     if (pNewData == NULL) {
       ThrowMemoryException();
@@ -567,29 +587,29 @@ printf("[jpk] strSrc.GetLength() %d \n", strSrc.GetLength());
     pOldData->Release();
     Attach(pNewData);
   }
-  CStringData* GetData() const throw() {
-printf("[jpk] %s(%d) \n", __FILE__, __LINE__);
-    return (reinterpret_cast<CStringData*>(m_pszData) - 1);
+
+  BStringData* GetData() const throw() {
+    return (reinterpret_cast<BStringData*>(m_pszData) - 1);
   }
+
   PXSTR PrepareWrite(_In_ int nLength) {
-printf("[jpk] %s(%d), nLength: %d \n", __FILE__, __LINE__, nLength);
     if (nLength < 0) AtlThrow("Invalid arguments");
 
-    CStringData* pOldData = GetData();
+    BStringData* pOldData = GetData();
     // nShared < 0 means true, >= 0 means false
     int nShared = 1 - pOldData->nRefs;
     // nTooShort < 0 means true, >= 0 means false
     int nTooShort = pOldData->nAllocLength - nLength;
-    // If either sign bit is set (i.e. either is less than zero), we need to
-    // copy data
+    /* If either sign bit is set (i.e. either is less than zero), we need to copy data */
     if ((nShared | nTooShort) < 0) {
       PrepareWrite2(nLength);
     }
 
     return (m_pszData);
   }
+
   ATL_NOINLINE void PrepareWrite2(_In_ int nLength) {
-    CStringData* pOldData = GetData();
+    BStringData* pOldData = GetData();
     if (pOldData->nDataLength > nLength) {
       nLength = pOldData->nDataLength;
     }
@@ -610,15 +630,16 @@ printf("[jpk] %s(%d), nLength: %d \n", __FILE__, __LINE__, nLength);
       Reallocate(nNewLength);
     }
   }
+
   ATL_NOINLINE void Reallocate(_In_ int nLength) {
-    CStringData* pOldData = GetData();
+    BStringData* pOldData = GetData();
     ATLASSERT(pOldData->nAllocLength < nLength);
     IAtlStringMgr* pStringMgr = pOldData->pStringMgr;
     if (pOldData->nAllocLength >= nLength || nLength <= 0) {
       ThrowMemoryException();
       return;
     }
-    CStringData* pNewData =
+    BStringData* pNewData =
         pStringMgr->Reallocate(pOldData, nLength, sizeof(XCHAR));
     if (pNewData == NULL) {
       ThrowMemoryException();
@@ -637,8 +658,8 @@ printf("[jpk] %s(%d), nLength: %d \n", __FILE__, __LINE__, nLength);
     m_pszData[nLength] = 0;
   }
 
-  static CStringData* __cdecl CloneData(_Inout_ CStringData* pData) {
-    CStringData* pNewData = NULL;
+  static BStringData* __cdecl CloneData(_Inout_ BStringData* pData) {
+    BStringData* pNewData = NULL;
 
     IAtlStringMgr* pNewStringMgr = pData->pStringMgr->Clone();
     if (!pData->IsLocked() && (pNewStringMgr == pData->pStringMgr)) {
@@ -664,6 +685,7 @@ printf("[jpk] %s(%d), nLength: %d \n", __FILE__, __LINE__, nLength);
  private:
   PXSTR m_pszData;
 };
+
 template <typename TCharType>
 class CStrBufT {
  public:

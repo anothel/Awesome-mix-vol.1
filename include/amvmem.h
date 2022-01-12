@@ -2,7 +2,7 @@
 
 #include <cstdlib>
 
-#include "include/awesomedefine.h"
+#include "include/amvdefine.h"
 #include "include/salieri.h"
 
 namespace awesome_ATL {
