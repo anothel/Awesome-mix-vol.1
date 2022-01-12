@@ -2,6 +2,9 @@
 #define __interface class
 #define ATLASSERT(x) assert(x)
 #define ATLENSURE(x) assert(x)
+#define ATLASSUME(x) assert(x)
+#define ATLENSURE_RETURN_VAL(x, y) assert(x)
+#define FAILED(hr) (hr < 0)
 #define ATLENSURE_THROW(x, s) assert(x)
 #define _InterlockedIncrement(x) __sync_fetch_and_add((x), 1)
 #define _InterlockedDecrement(x) __sync_fetch_and_sub((x), 1)
@@ -24,6 +27,15 @@ typedef int64_t INT_PTR, *PINT_PTR;
 typedef uint64_t UINT_PTR, *PUINT_PTR;
 typedef unsigned long DWORD;
 
+typedef char CHAR;
+typedef CHAR *LPSTR;
+typedef const CHAR *LPCSTR;
+typedef unsigned long ULONG;
+
+typedef const void *LPCVOID;
+
+#define BOOL int
+
 typedef uint64_t ULONG_PTR, *PULONG_PTR;
 typedef ULONG_PTR DWORD_PTR, *PDWORD_PTR;
 
@@ -45,3 +57,5 @@ typedef ULONG_PTR DWORD_PTR, *PDWORD_PTR;
 #ifndef _WIN32
 #define CSTRING_EXPLICIT explicit
 #endif  // _WIN32
+
+#define log1 printf("[jpk] %s(%d), %s \n", __FILE__, __LINE__, __func__);
