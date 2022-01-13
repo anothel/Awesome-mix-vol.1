@@ -27,36 +27,22 @@ class AmvLimits<unsigned int> {
 };
 
 template <>
-class AmvLimits<long> {
+class AmvLimits<int64_t> {
  public:
-  static const long _Min = LONG_MIN;
-  static const long _Max = LONG_MAX;
+  static const int64_t _Min = LONG_MIN;
+  static const int64_t _Max = LONG_MAX;
 };
 
 template <>
-class AmvLimits<unsigned long> {
+class AmvLimits<uint64_t> {
  public:
-  static const unsigned long _Min = 0;
-  static const unsigned long _Max = ULONG_MAX;
-};
-
-template <>
-class AmvLimits<long long> {
- public:
-  static const long long _Min = LLONG_MIN;
-  static const long long _Max = LLONG_MAX;
-};
-
-template <>
-class AmvLimits<unsigned long long> {
- public:
-  static const unsigned long long _Min = 0;
-  static const unsigned long long _Max = ULLONG_MAX;
+  static const uint64_t _Min = 0;
+  static const uint64_t _Max = ULONG_MAX;
 };
 
 /* generic version */
 template <typename T>
-inline long AmvAdd(_Out_ T *ptResult, _In_ T tLeft, _In_ T tRight) {
+inline int64_t AmvAdd(_Out_ T *ptResult, _In_ T tLeft, _In_ T tRight) {
   if (::AMV::AmvLimits<T>::_Max - tLeft < tRight) {
     return ERROR_ARITHMETIC_OVERFLOW;
   }
@@ -65,9 +51,9 @@ inline long AmvAdd(_Out_ T *ptResult, _In_ T tLeft, _In_ T tRight) {
 }
 
 template <typename T>
-inline long AmvAddThrow(_In_ T tLeft, _In_ T tRight) {
+inline int64_t AmvAddThrow(_In_ T tLeft, _In_ T tRight) {
   T tResult;
-  long l;
+  int64_t l;
   if ((l = AmvAdd(&tResult, tLeft, tRight)) != S_OK) {
     AmvThrow(l);
   }
@@ -76,7 +62,7 @@ inline long AmvAddThrow(_In_ T tLeft, _In_ T tRight) {
 
 /* generic but comparatively slow version */
 template <typename T>
-inline long AmvMultiply(_Out_ T *ptResult, _In_ T tLeft, _In_ T tRight) {
+inline int64_t AmvMultiply(_Out_ T *ptResult, _In_ T tLeft, _In_ T tRight) {
   /* avoid divide 0 */
   if (tLeft == 0) {
     *ptResult = 0;
@@ -91,8 +77,10 @@ inline long AmvMultiply(_Out_ T *ptResult, _In_ T tLeft, _In_ T tRight) {
 
 /* fast version for 32 bit integers */
 template <>
-inline long AmvMultiply(_Out_ int *piResult, _In_ int iLeft, _In_ int iRight) {
-  long i64Result = static_cast<long>(iLeft) * static_cast<long>(iRight);
+inline int64_t AmvMultiply(_Out_ int *piResult, _In_ int iLeft,
+                           _In_ int iRight) {
+  int64_t i64Result =
+      static_cast<int64_t>(iLeft) * static_cast<int64_t>(iRight);
   if (i64Result > INT_MAX || i64Result < INT_MIN) {
     return ERROR_ARITHMETIC_OVERFLOW;
   }
@@ -101,10 +89,10 @@ inline long AmvMultiply(_Out_ int *piResult, _In_ int iLeft, _In_ int iRight) {
 }
 
 template <>
-inline long AmvMultiply(_Out_ unsigned int *piResult, _In_ unsigned int iLeft,
-                        _In_ unsigned int iRight) {
-  unsigned long i64Result =
-      static_cast<unsigned long>(iLeft) * static_cast<unsigned long>(iRight);
+inline int64_t AmvMultiply(_Out_ unsigned int *piResult,
+                           _In_ unsigned int iLeft, _In_ unsigned int iRight) {
+  uint64_t i64Result =
+      static_cast<uint64_t>(iLeft) * static_cast<uint64_t>(iRight);
   if (i64Result > UINT_MAX) {
     return ERROR_ARITHMETIC_OVERFLOW;
   }
@@ -113,25 +101,26 @@ inline long AmvMultiply(_Out_ unsigned int *piResult, _In_ unsigned int iLeft,
 }
 
 template <>
-inline long AmvMultiply(_Out_ long *piResult, _In_ long iLeft,
-                        _In_ long iRight) {
-  long i64Result = static_cast<long>(iLeft) * static_cast<long>(iRight);
+inline int64_t AmvMultiply(_Out_ int64_t *piResult, _In_ int64_t iLeft,
+                           _In_ int64_t iRight) {
+  int64_t i64Result =
+      static_cast<int64_t>(iLeft) * static_cast<int64_t>(iRight);
   if (i64Result > LONG_MAX || i64Result < LONG_MIN) {
     return ERROR_ARITHMETIC_OVERFLOW;
   }
-  *piResult = static_cast<long>(i64Result);
+  *piResult = static_cast<int64_t>(i64Result);
   return S_OK;
 }
 
 template <>
-inline long AmvMultiply(_Out_ unsigned long *piResult, _In_ unsigned long iLeft,
-                        _In_ unsigned long iRight) {
-  unsigned long i64Result =
-      static_cast<unsigned long>(iLeft) * static_cast<unsigned long>(iRight);
+inline int64_t AmvMultiply(_Out_ uint64_t *piResult, _In_ uint64_t iLeft,
+                           _In_ uint64_t iRight) {
+  uint64_t i64Result =
+      static_cast<uint64_t>(iLeft) * static_cast<uint64_t>(iRight);
   if (i64Result > ULONG_MAX) {
     return ERROR_ARITHMETIC_OVERFLOW;
   }
-  *piResult = static_cast<unsigned long>(i64Result);
+  *piResult = static_cast<uint64_t>(i64Result);
   return S_OK;
 }
 

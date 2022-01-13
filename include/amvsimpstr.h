@@ -41,7 +41,7 @@ struct BStringData {
   // Length of allocated data in chars (not including terminating null)
   int nAllocLength;
   // Reference count: negative == locked
-  long nRefs;
+  int64_t nRefs;
 
   void* data() throw() { return (this + 1); }
 
@@ -112,9 +112,14 @@ class CStrBufT;
 template <typename BaseType, const int t_nSize>
 class CStaticString {
  public:
-  CStaticString(_In_z_ const BaseType* psz) : m_psz(psz) {}
+  explicit CStaticString(_In_z_ const BaseType* psz) : m_psz(psz) {
+    //
+  }
 
-  operator const BaseType*() const { return m_psz; }
+  operator const BaseType*() const {
+    //
+    return m_psz;
+  }
 
   static int __cdecl GetLength() { return (t_nSize / sizeof(BaseType)) - 1; }
 
@@ -122,7 +127,7 @@ class CStaticString {
   const BaseType* m_psz;
 
  private:
-  CStaticString(_In_ const CStaticString& str) throw();
+  explicit CStaticString(_In_ const CStaticString& str) throw();
   CStaticString& operator=(_In_ const CStaticString& str) throw();
 };
 
@@ -148,7 +153,7 @@ class CSimpleStringT {
     Attach(pData);
   }
 
-  CSimpleStringT(_In_ const CSimpleStringT& strSrc) {
+  explicit CSimpleStringT(_In_ const CSimpleStringT& strSrc) {
     Attach(CloneData(strSrc.GetData()));
   }
 
@@ -510,9 +515,7 @@ class CSimpleStringT {
                                 _In_ size_t nDestLen,
                                 _In_reads_opt_(nChars) const XCHAR* pchSrc,
                                 _In_ int nChars) throw() {
-    memcpy(pchDest, pchSrc, nChars * sizeof(XCHAR));
-    // memcpy_s(pchDest, nDestLen * sizeof(XCHAR), pchSrc, nChars *
-    // sizeof(XCHAR));
+    memcpy_s(pchDest, nDestLen * sizeof(XCHAR), pchSrc, nChars * sizeof(XCHAR));
   }
 
   _AMV_INSECURE_DEPRECATE(
@@ -535,7 +538,7 @@ class CSimpleStringT {
     if (psz == NULL) {
       return (0);
     }
-    return (int(strlen(psz)));
+    return (static_cast<int>(strlen(psz)));
   }
 
   static int __cdecl StringLengthN(_In_reads_opt_z_(sizeInXChar)
@@ -544,11 +547,11 @@ class CSimpleStringT {
     if (psz == NULL) {
       return (0);
     }
-    return (int(strnlen(psz, sizeInXChar)));
+    return (static_cast<int>(strnlen(psz, sizeInXChar)));
   }
 
  protected:
-  static void __cdecl Concatenate(_Inout_ CSimpleStringT& strResult,
+  static void __cdecl Concatenate(_Inout_ const CSimpleStringT& strResult,
                                   _In_reads_(nLength1) PCXSTR psz1,
                                   _In_ int nLength1,
                                   _In_reads_(nLength2) PCXSTR psz2,
@@ -701,12 +704,12 @@ class CStrBufT {
   static const DWORD SET_LENGTH = 0x02;
 
  public:
-  explicit CStrBufT(_In_ StringType& str)
+  explicit CStrBufT(_In_ const StringType& str)
       : m_str(str), m_pszBuffer(NULL), m_nLength(str.GetLength()) {
     m_pszBuffer = m_str.GetBuffer();
   }
 
-  CStrBufT(_In_ StringType& str, _In_ int nMinLength,
+  CStrBufT(_In_ const StringType& str, _In_ int nMinLength,
            _In_ DWORD dwFlags = AUTO_LENGTH)
       : m_str(str),
         m_pszBuffer(NULL),
@@ -740,7 +743,7 @@ class CStrBufT {
   /* Private copy constructor and copy assignment operator to prevent
    * accidental use*/
  private:
-  CStrBufT(_In_ const CStrBufT&) throw();
+  explicit CStrBufT(_In_ const CStrBufT&) throw();
   CStrBufT& operator=(_In_ const CStrBufT&) throw();
 };
 

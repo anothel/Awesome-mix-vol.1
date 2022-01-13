@@ -29,26 +29,29 @@
 #define CSTRING_EXPLICIT explicit
 #endif  // _WIN32
 
-typedef unsigned short WORD;
+typedef uint16_t WORD;
 
 typedef unsigned int UINT;
 typedef int64_t INT_PTR, *PINT_PTR;
 typedef uint64_t UINT_PTR, *PUINT_PTR;
-typedef unsigned long DWORD;
+typedef uint64_t DWORD;
 
 typedef char *LPSTR;
 typedef const char *LPCSTR;
-typedef unsigned long ULONG;
+typedef uint64_t ULONG;
 
 typedef const void *LPCVOID;
+
+#define memmove_s(d, dl, s, sl) memmove(d, s, sl);
+#define memcpy_s(d, dl, s, sl) memcpy(d, s, sl);
 
 #define BOOL int
 
 typedef uint64_t ULONG_PTR, *PULONG_PTR;
 typedef ULONG_PTR DWORD_PTR, *PDWORD_PTR;
 
-#define S_OK ((long)0L)
-#define S_FALSE ((long)1L)
+#define S_OK ((int64_t)0L)
+#define S_FALSE ((int64_t)1L)
 
 #define ERROR_ARITHMETIC_OVERFLOW 534L
 

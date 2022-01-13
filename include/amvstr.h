@@ -15,7 +15,7 @@ namespace AMV {
 
 class CAmvStringMgr : public IAmvStringMgr {
  public:
-  CAmvStringMgr(_In_opt_ IAmvMemMgr* pMemMgr = NULL) throw()
+  explicit CAmvStringMgr(_In_opt_ IAmvMemMgr* pMemMgr = NULL) throw()
       : m_pMemMgr(pMemMgr) {
     m_nil.SetManager(this);
   }
