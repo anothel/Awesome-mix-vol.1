@@ -19,8 +19,8 @@ class BBB : public AAA<U> {
 
  protected:
   void Print() {
-    std::cout << "BBBBBBBBBB" << std::endl;
-    std::cout << "b_: " << b_ << std::endl;
+    //
+    std::cout << __FILE__ << "(" << __LINE__ << ")" << std::endl;
   }
 
  private:

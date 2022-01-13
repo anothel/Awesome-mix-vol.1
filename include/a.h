@@ -20,8 +20,8 @@ class AAA {
 
  protected:
   void Print() {
-    std::cout << "AAAAAAAAAA" << std::endl;
-    std::cout << "a_: " << a_ << std::endl;
+    //
+    std::cout << __FILE__ << "(" << __LINE__ << ")" << std::endl;
   }
 
  private:
