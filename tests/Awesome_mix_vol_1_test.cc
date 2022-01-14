@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 
 #include <iostream>
+#include <string>
 
 #include "include/amvstr.h"
 #include "include/b.h"
@@ -17,12 +18,15 @@ const char* szSrc = "This is source";
 const char* pszTestStr = "This is test | ";
 char szTestStr[] = "This is test | This is test | ";
 char szTestStrDel[] = "Thistest | This is test | ";
-char szTestStrAA[] = "This is test | This is test | AA";
+const char* szTestStrAA = "This is test | This is test | AA";
 char sztestStringAA[] = "this is test | This is test | AA";
 
-TEST(_Func_UnitTest, BStringT) {
+TEST(BStringT, construct) {}
+
+TEST(BStringT, func) {
   try {
-    BString bstring(szTestStrAA);
+    std::string sTest("This is test | This is test | AA");
+    BString bstring(sTest.c_str());
 
     ASSERT_EQ(bstring.Compare(szTestStrAA), S_OK);
 
@@ -30,6 +34,44 @@ TEST(_Func_UnitTest, BStringT) {
 
     bstring.Delete(4, 4);
     ASSERT_EQ(memcmp(bstring, szTestStrDel, strlen(szTestStrDel)), S_OK);
+
+    bstring = sTest.c_str();
+    bstring.Insert(0, "^");
+    ASSERT_EQ(std::string(bstring), std::string("^" + sTest));
+
+    bstring.Insert(0, static_cast<char>(45));
+    ASSERT_EQ(std::string(bstring), std::string("-^" + sTest));
+
+    bstring.Replace("^", "");
+    ASSERT_EQ(std::string(bstring), std::string("-" + sTest));
+
+    bstring.Replace(static_cast<char>(45), static_cast<char>(95));
+    ASSERT_EQ(std::string(bstring), std::string("_" + sTest));
+
+    bstring.Remove(static_cast<char>(95));
+    ASSERT_EQ(std::string(bstring), std::string(sTest));
+
+// BString str("ABC|DEF|EEE|");
+// BString token;
+// int pos = 0;
+// while ((token  = str.Tokenize("|", pos)) != "")
+//     printf("%s\n", token);
+
+    // bstring.Tokenize();
+    // bstring.Find();
+    // bstring.FindOneOf();
+    // bstring.ReverseFind();
+    // bstring.MakeUpper();
+    // bstring.MakeLower();
+    // bstring.MakeReverse();
+    // bstring.TrimRight();
+    // bstring.TrimLeft();
+    // bstring.Trim();
+    // bstring.Mid();
+    // bstring.Right();
+    // bstring.Left();
+    // bstring.SpanIncluding();
+    // bstring.SpanExcluding();
   } catch (...) {
   }
 }
@@ -57,6 +99,24 @@ TEST(_Func_UnitTest, CSimpleStringT) {
 
     bstring.Empty();
     ASSERT_EQ(bstring.GetLength(), 0);
+
+    // bstring.FreeExtra();
+    // bstring.GetAllocLength();
+    // bstring.GetAt();
+    // bstring.GetBuffer();
+    // bstring.GetBufferSetLength();
+    // bstring.GetLength();
+    // bstring.GetString();
+    // bstring.IsEmpty();
+    // bstring.UnlockBuffer();
+    // bstring.Preallocate();
+    // bstring.ReleaseBuffer();
+    // bstring.ReleaseBufferSetLength();
+    // bstring.Truncate();
+    // bstring.SetAt();
+    // bstring.SetManager();
+    // bstring.SetString();
+    // bstring.Concatenate();
   } catch (...) {
   }
 }
