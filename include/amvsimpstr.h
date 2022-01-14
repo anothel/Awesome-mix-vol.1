@@ -112,14 +112,9 @@ class CStrBufT;
 template <typename BaseType, const int t_nSize>
 class CStaticString {
  public:
-  explicit CStaticString(_In_z_ const BaseType* psz) : m_psz(psz) {
-    //
-  }
+  explicit CStaticString(_In_z_ const BaseType* psz) : m_psz(psz) {}
 
-  operator const BaseType*() const {
-    //
-    return m_psz;
-  }
+  operator const BaseType*() const { return m_psz; }
 
   static int __cdecl GetLength() { return (t_nSize / sizeof(BaseType)) - 1; }
 
@@ -303,7 +298,6 @@ class CSimpleStringT {
 
   void Empty() throw() {
     BStringData* pOldData = GetData();
-    IAmvStringMgr* pStringMgr = pOldData->pStringMgr;
     if (pOldData->nDataLength == 0) {
       return;
     }
@@ -313,8 +307,7 @@ class CSimpleStringT {
       SetLength(0);
     } else {
       pOldData->Release();
-      BStringData* pNewData = pStringMgr->GetNilString();
-      Attach(pNewData);
+      Attach(pOldData->pStringMgr->GetNilString());
     }
   }
 

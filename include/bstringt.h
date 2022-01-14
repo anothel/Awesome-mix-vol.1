@@ -25,9 +25,7 @@ class BStringT : public CSimpleStringT<BaseType> {
       : CThisSimpleString(pStringMgr) {}
 
   // Copy constructor
-  explicit BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc) {
-    //
-  }
+  explicit BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc) {}
 
   // Construct from CSimpleStringT
   operator CSimpleStringT<BaseType>&() {
@@ -35,22 +33,16 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
   explicit BStringT(_In_ const CSimpleStringT<BaseType>& strSrc)
-      : CThisSimpleString(strSrc) {
-    //
-  }
+      : CThisSimpleString(strSrc) {}
 
   explicit BStringT(_In_opt_z_ const XCHAR* pszSrc)
       : CThisSimpleString(StringTraits::GetDefaultManager()) {
-    if (!CheckImplicitLoad(pszSrc)) {
-      *this = pszSrc;
-    }
+    *this = pszSrc;
   }
 
   BStringT(_In_opt_z_ const XCHAR* pszSrc, _In_ IAmvStringMgr* pStringMgr)
       : CThisSimpleString(pStringMgr) {
-    if (!CheckImplicitLoad(pszSrc)) {
-      *this = pszSrc;
-    }
+    *this = pszSrc;
   }
 
   CSTRING_EXPLICIT BStringT(_In_z_ const unsigned char* pszSrc)
@@ -65,7 +57,6 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
 #define _CSTRING_CHAR_T char
-
   CSTRING_EXPLICIT BStringT(_In_ _CSTRING_CHAR_T ch, _In_ int nLength = 1)
       : CThisSimpleString(StringTraits::GetDefaultManager()) {
     AMVASSERT(nLength >= 0);
@@ -150,8 +141,7 @@ class BStringT : public CSimpleStringT<BaseType> {
       return pStringMgr;
     }
 
-    pStringMgr = StringTraits::GetDefaultManager();
-    return pStringMgr->Clone();
+    return StringTraits::GetDefaultManager()->Clone();
   }
 
   // Comparison
@@ -909,18 +899,6 @@ class BStringT : public CSimpleStringT<BaseType> {
 
   friend bool operator!=(_In_ const BStringT& str1, _In_ XCHAR ch2) throw() {
     return ((str1.GetLength() != 1) || (str1[0] != ch2));
-  }
-
- private:
-  bool CheckImplicitLoad(_In_opt_ const void* pv) {
-    bool bRet = false;
-
-    if ((pv != NULL) && IS_INTRESOURCE(pv)) {
-      UINT nID = LOWORD(reinterpret_cast<uint64_t>(pv));
-      (nID);
-    }
-
-    return (bRet);
   }
 };
 
