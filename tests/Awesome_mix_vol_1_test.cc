@@ -51,11 +51,11 @@ TEST(BStringT, func) {
     bstring.Remove(static_cast<char>(95));
     ASSERT_EQ(std::string(bstring), std::string(sTest));
 
-// BString str("ABC|DEF|EEE|");
-// BString token;
-// int pos = 0;
-// while ((token  = str.Tokenize("|", pos)) != "")
-//     printf("%s\n", token);
+BString str("ABC|DEF|EEE|");
+BString token;
+int pos = 0;
+while ((token  = str.Tokenize("|", pos)) != "")
+    printf("%s\n", token);
 
     // bstring.Tokenize();
     // bstring.Find();
