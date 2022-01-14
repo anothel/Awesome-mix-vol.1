@@ -32,6 +32,7 @@ class CAmvStringMgr : public IAmvStringMgr {
 
     return &strMgr;
   }
+
   // IAmvStringMgr
  public:
   virtual BStringData* Allocate(_In_ int nChars, _In_ int nCharSize) throw() {
@@ -68,12 +69,14 @@ class CAmvStringMgr : public IAmvStringMgr {
 
     return (pData);
   }
+
   virtual void Free(_In_ BStringData* pData) throw() {
     AMVASSUME(pData != NULL);
     AMVASSERT(pData->pStringMgr == this);
 
     m_pMemMgr->Free(pData);
   }
+
   virtual BStringData* Reallocate(_Inout_ BStringData* pData, _In_ int nChars,
                                   _In_ int nCharSize) throw() {
     AMVENSURE_RETURN_VAL(nChars >= 0, NULL);
@@ -108,10 +111,12 @@ class CAmvStringMgr : public IAmvStringMgr {
 
     return pNewData;
   }
+
   virtual BStringData* GetNilString() throw() {
     m_nil.AddRef();
     return &m_nil;
   }
+
   virtual IAmvStringMgr* Clone() throw() { return this; }
 
  protected:
@@ -122,21 +127,22 @@ class CAmvStringMgr : public IAmvStringMgr {
 };
 
 template <class ChTraits>
-inline typename ChTraits::PCXSTR strstrT(typename ChTraits::PCXSTR pStr,
-                                         typename ChTraits::PCXSTR pCharSet);
+inline const char* strstrT(const char* pStr, const char* pCharSet);
 
 template <typename _CharType = char>
-class ChTraitsOS : public ChTraitsBase<_CharType> {
+class ChTraitsOS {
  public:
-  static int tclen(_In_z_ LPCSTR p) throw() {
+  static int tclen(_In_z_ const char* p) throw() {
     AMVASSERT(p != NULL);
-    LPCSTR pnext = CharNext(p);
+    const char* pnext = CharNext(p);
     return ((pnext - p) > 1) ? 2 : 1;
   }
-  static LPCSTR strstr(_In_z_ LPCSTR pStr, _In_z_ LPCSTR pCharSet) throw() {
-    return strstrT<ChTraitsOS<typename ChTraitsBase<_CharType>::XCHAR> >(
-        pStr, pCharSet);
+
+  _Ret_maybenull_z_ static const char* strchr(_In_z_ const char* p,
+                                              _In_ char ch) throw() {
+    return AmvstrchrT(p, ch);
   }
+
   static int strspn(_In_z_ const _CharType* pStr,
                     _In_z_ const _CharType* pCharSet) throw() {
     AMVASSERT(pStr != NULL);
@@ -155,6 +161,7 @@ class ChTraitsOS : public ChTraitsBase<_CharType> {
     }
     return nRet;
   }
+
   static int strcspn(_In_z_ const _CharType* pStr,
                      _In_z_ const _CharType* pCharSet) throw() {
     AMVASSERT(pStr != NULL);
@@ -173,7 +180,9 @@ class ChTraitsOS : public ChTraitsBase<_CharType> {
     }
     return nRet;
   }
-  static LPCSTR strpbrk(_In_z_ LPCSTR p, _In_z_ LPCSTR lpszCharSet) throw() {
+
+  static const char* strpbrk(_In_z_ const char* p,
+                             _In_z_ const char* lpszCharSet) throw() {
     int nRet = 0;
     nRet = strcspn(p, lpszCharSet);
     if (p[nRet]) {
@@ -193,36 +202,37 @@ class ChTraitsOS : public ChTraitsBase<_CharType> {
 
   static int StringCompare(_In_z_ const _CharType* pstrOne,
                            _In_z_ const _CharType* pstrOther) throw() {
-    return strcmp((LPCSTR)pstrOne, (LPCSTR)pstrOther);
+    return strcmp((const char*)pstrOne, (const char*)pstrOther);
   }
 
   static int StringCompareIgnore(_In_z_ const _CharType* pstrOne,
                                  _In_z_ const _CharType* pstrOther) throw() {
-    return strcasecmp((LPCSTR)pstrOne, (LPCSTR)pstrOther);
+    return strcasecmp((const char*)pstrOne, (const char*)pstrOther);
   }
 
-  static LPCSTR StringFindString(_In_z_ LPCSTR pstrBlock,
-                                 _In_z_ LPCSTR pstrMatch) throw() {
+  static const char* StringFindString(_In_z_ const char* pstrBlock,
+                                      _In_z_ const char* pstrMatch) throw() {
     return strstr(pstrBlock, pstrMatch);
   }
 
   static LPSTR StringFindString(_In_z_ LPSTR pszBlock,
-                                _In_z_ LPCSTR pszMatch) throw() {
+                                _In_z_ const char* pszMatch) throw() {
     return (const_cast<LPSTR>(
-        StringFindString(const_cast<LPCSTR>(pszBlock), pszMatch)));
+        StringFindString(const_cast<const char*>(pszBlock), pszMatch)));
   }
 
-  static LPCSTR StringFindChar(_In_z_ LPCSTR pszBlock,
-                               _In_ char chMatch) throw() {
+  static const char* StringFindChar(_In_z_ const char* pszBlock,
+                                    _In_ char chMatch) throw() {
     return strchr(pszBlock, chMatch);
   }
 
-  static LPCSTR StringFindCharRev(_In_z_ LPCSTR psz, _In_ char ch) throw() {
+  static const char* StringFindCharRev(_In_z_ const char* psz,
+                                       _In_ char ch) throw() {
     return strrchr(psz, ch);
   }
 
-  static LPCSTR StringScanSet(_In_z_ LPCSTR pszBlock,
-                              _In_z_ LPCSTR pszMatch) throw() {
+  static const char* StringScanSet(_In_z_ const char* pszBlock,
+                                   _In_z_ const char* pszMatch) throw() {
     return strpbrk(pszBlock, pszMatch);
   }
 
@@ -305,24 +315,23 @@ class ChTraitsOS : public ChTraitsBase<_CharType> {
 };
 
 template <class ChTraits>
-inline typename ChTraits::PCXSTR strstrT(_In_ typename ChTraits::PCXSTR pStr,
-                                         _In_
-                                         typename ChTraits::PCXSTR pCharSet) {
+inline const char* strstrT(_In_ const char* pStr, _In_ const char* pCharSet) {
+  log1;
   AMVASSERT(pStr != NULL);
   size_t nCharSetLen = ChTraits::GetBaseTypeLength(pCharSet);
   if (nCharSetLen == 0) return pStr;
+
   // strlen returns length in bytes, not chars.
   size_t nStrLen = ChTraits::GetBaseTypeLength(pStr);
-  typename ChTraits::PCXSTR pStrEnd = pStr + nStrLen;
-  const typename ChTraits::XCHAR* pMatch;
-  const typename ChTraits::XCHAR* pStart = pStr;
+  const char* pStrEnd = pStr + nStrLen;
+  const char* pMatch;
+  const char* pStart = pStr;
   while ((pMatch = ChTraits::strchr(pStart, *pCharSet)) != NULL) {
     size_t nCharsLeftInStr = pStrEnd - pMatch;
     if (nCharsLeftInStr < nCharSetLen) {
       break;
     }
-    if (memcmp(pMatch, pCharSet,
-               nCharSetLen * sizeof(typename ChTraits::XCHAR)) == 0) {
+    if (memcmp(pMatch, pCharSet, nCharSetLen * sizeof(char)) == 0) {
       return pMatch;
     }
     pStart = ChTraits::CharNext(pMatch);

@@ -37,7 +37,6 @@ typedef uint64_t UINT_PTR, *PUINT_PTR;
 typedef uint64_t DWORD;
 
 typedef char *LPSTR;
-typedef const char *LPCSTR;
 typedef uint64_t ULONG;
 
 typedef const void *LPCVOID;
