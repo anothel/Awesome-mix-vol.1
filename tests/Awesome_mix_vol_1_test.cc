@@ -99,7 +99,7 @@ TEST(_Func_UnitTest, CSimpleStringT) {
 
     bstring.Empty();
     ASSERT_EQ(bstring.GetLength(), 0);
-
+ 
     // bstring.FreeExtra();
     // bstring.GetAllocLength();
     // bstring.GetAt();
