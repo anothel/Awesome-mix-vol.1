@@ -96,7 +96,7 @@ TEST(_Func_UnitTest, CSimpleStringT) {
 
     bstring.CopyCharsOverlapped(szDest, szSrc, strlen(szSrc));
     ASSERT_EQ(memcmp(szDest, szSrc, strlen(szSrc)), S_OK);
-
+ 
     bstring.Empty();
     ASSERT_EQ(bstring.GetLength(), 0);
 
