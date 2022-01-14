@@ -8,20 +8,11 @@
 template <typename U>
 class BBB : public AAA<U> {
  public:
-  BBB(U b) throw() : AAA<U>(b), b_(b) {
-    //
-    Print();
-  }
-  ~BBB() {
-    //
-    std::cout << "~BBB" << std::endl;
-  }
+  BBB(U b) throw() : AAA<U>(b), b_(b) { Print(); }
+  ~BBB() { std::cout << "~BBB" << std::endl; }
 
  protected:
-  void Print() {
-    //
-    std::cout << __FILE__ << "(" << __LINE__ << ")" << std::endl;
-  }
+  void Print() { std::cout << __FILE__ << "(" << __LINE__ << ")" << std::endl; }
 
  private:
   U b_;

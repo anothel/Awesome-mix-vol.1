@@ -8,21 +8,12 @@
 template <typename T>
 class AAA {
  public:
-  explicit AAA(T a) : a_(a) {
-    //
-    Print();
-  }
+  explicit AAA(T a) : a_(a) { Print(); }
 
-  virtual ~AAA() {
-    //
-    std::cout << "~AAA" << std::endl;
-  }
+  virtual ~AAA() { std::cout << "~AAA" << std::endl; }
 
  protected:
-  void Print() {
-    //
-    std::cout << __FILE__ << "(" << __LINE__ << ")" << std::endl;
-  }
+  void Print() { std::cout << __FILE__ << "(" << __LINE__ << ")" << std::endl; }
 
  private:
   T a_;
