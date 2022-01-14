@@ -8,24 +8,35 @@
 #include "include/amvstr.h"
 #include "include/b.h"
 
-TEST(Inheriting_from_a_template, test1) {
-  //
-  AAA<int> aaa(1);
+TEST(Inheriting_from_a_template, test1) { AAA<int> aaa(1); }
+
+TEST(Inheriting_from_a_template, test2) { BBB<int> bbb(2); }
+
+char szDest[100];
+const char* szSrc = "This is source";
+const char* pszTestStr = "This is test | ";
+char szTestStr[] = "This is test | This is test | ";
+char szTestStrDel[] = "Thistest | This is test | ";
+char szTestStrAA[] = "This is test | This is test | AA";
+char sztestStringAA[] = "this is test | This is test | AA";
+
+TEST(_Func_UnitTest, BStringT) {
+  try {
+    BString bstring(szTestStrAA);
+
+    ASSERT_EQ(bstring.Compare(szTestStrAA), S_OK);
+
+    ASSERT_EQ(bstring.CompareNoCase(sztestStringAA), S_OK);
+
+    bstring.Delete(4, 4);
+    ASSERT_EQ(memcmp(bstring, szTestStrDel, strlen(szTestStrDel)), S_OK);
+  } catch (...) {
+  }
 }
 
-TEST(Inheriting_from_a_template, test2) {
-  //
-  BBB<int> bbb(2);
-}
-
-TEST(BString_Func_UnitTest, Test) {
+TEST(_Func_UnitTest, CSimpleStringT) {
   try {
     BString bstring;
-    const char* pszTestStr = "This is test | ";
-    char szTestStr[] = "This is test | This is test | ";
-    char szTestStrDel[] = "Thistest | This is test | ";
-    char szTestStrAA[] = "This is test | This is test | AA";
-    char sztestStringAA[] = "this is test | This is test | AA";
 
     bstring.Append(pszTestStr);
     bstring.Append(pszTestStr, strlen(pszTestStr));
@@ -35,24 +46,6 @@ TEST(BString_Func_UnitTest, Test) {
     bstring.AppendChar('A');
     ASSERT_EQ(memcmp(bstring, szTestStrAA, strlen(szTestStrAA)), S_OK);
 
-    ASSERT_EQ(bstring.Compare(szTestStrAA), S_OK);
-
-    ASSERT_EQ(bstring.CompareNoCase(sztestStringAA), S_OK);
-
-    bstring.Delete(4, 4);
-    ASSERT_EQ(memcmp(bstring, szTestStrDel, strlen(szTestStrDel)), S_OK);
-
-    
-  } catch (...) {
-  }
-}
-
-TEST(BString_Func_UnitTest, Copy) {
-  try {
-    BString bstring;
-    char szDest[100];
-    const char* szSrc = "This is source";
-
     bstring.CopyChars(szDest, szSrc, strlen(szSrc));
     ASSERT_EQ(memcmp(szDest, szSrc, strlen(szSrc)), S_OK);
 
@@ -61,15 +54,13 @@ TEST(BString_Func_UnitTest, Copy) {
 
     bstring.CopyCharsOverlapped(szDest, szSrc, strlen(szSrc));
     ASSERT_EQ(memcmp(szDest, szSrc, strlen(szSrc)), S_OK);
+
+    bstring.Empty();
+    ASSERT_EQ(bstring.GetLength(), 0);
   } catch (...) {
   }
 }
 
-TEST(BStringTest1, test3) {
-  //
-  BString bstring;
-}
+TEST(BStringTest1, test3) { BString bstring; }
 
-TEST(ByteStringTest2, RectangleSize_false) {
-  //
-}
+TEST(ByteStringTest2, RectangleSize_false) {}
