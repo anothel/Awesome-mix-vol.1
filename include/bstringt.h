@@ -14,9 +14,6 @@ class BStringT : public CSimpleStringT<BaseType> {
  public:
   typedef CSimpleStringT<BaseType> CThisSimpleString;
   typedef StringTraits StrTraits;
-  typedef typename CThisSimpleString::XCHAR XCHAR;
-  typedef typename CThisSimpleString::PXSTR PXSTR;
-  typedef typename CThisSimpleString::PCXSTR PCXSTR;
 
  public:
   BStringT() throw() : CThisSimpleString(StringTraits::GetDefaultManager()) {}
@@ -35,12 +32,12 @@ class BStringT : public CSimpleStringT<BaseType> {
   explicit BStringT(_In_ const CSimpleStringT<BaseType>& strSrc)
       : CThisSimpleString(strSrc) {}
 
-  explicit BStringT(_In_opt_z_ const XCHAR* pszSrc)
+  explicit BStringT(_In_opt_z_ const char* pszSrc)
       : CThisSimpleString(StringTraits::GetDefaultManager()) {
     *this = pszSrc;
   }
 
-  BStringT(_In_opt_z_ const XCHAR* pszSrc, _In_ IAmvStringMgr* pStringMgr)
+  BStringT(_In_opt_z_ const char* pszSrc, _In_ IAmvStringMgr* pStringMgr)
       : CThisSimpleString(pStringMgr) {
     *this = pszSrc;
   }
@@ -61,18 +58,18 @@ class BStringT : public CSimpleStringT<BaseType> {
       : CThisSimpleString(StringTraits::GetDefaultManager()) {
     AMVASSERT(nLength >= 0);
     if (nLength > 0) {
-      PXSTR pszBuffer = this->GetBuffer(nLength);
-      StringTraits::FloodCharacters(XCHAR(ch), nLength, pszBuffer);
+      char* pszBuffer = this->GetBuffer(nLength);
+      StringTraits::FloodCharacters(char(ch), nLength, pszBuffer);
       this->ReleaseBufferSetLength(nLength);
     }
   }
 #undef _CSTRING_CHAR_T
 
  public:
-  BStringT(_In_reads_(nLength) const XCHAR* pch, _In_ int nLength)
+  BStringT(_In_reads_(nLength) const char* pch, _In_ int nLength)
       : CThisSimpleString(pch, nLength, StringTraits::GetDefaultManager()) {}
 
-  BStringT(_In_reads_(nLength) const XCHAR* pch, _In_ int nLength,
+  BStringT(_In_reads_(nLength) const char* pch, _In_ int nLength,
            _In_ IAmvStringMgr* pStringMgr)
       : CThisSimpleString(pch, nLength, pStringMgr) {}
 
@@ -92,14 +89,14 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (*this);
   }
 
-  BStringT& operator=(_In_opt_z_ PCXSTR pszSrc) {
+  BStringT& operator=(_In_opt_z_ const char* pszSrc) {
     CThisSimpleString::operator=(pszSrc);
 
     return (*this);
   }
 
-  BStringT& operator=(_In_ XCHAR ch) {
-    XCHAR ach[2] = {ch, 0};
+  BStringT& operator=(_In_ char ch) {
+    char ach[2] = {ch, 0};
 
     return (operator=(ach));
   }
@@ -110,19 +107,19 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (*this);
   }
 
-  BStringT& operator+=(_In_z_ PCXSTR pszSrc) {
+  BStringT& operator+=(_In_z_ const char* pszSrc) {
     CThisSimpleString::operator+=(pszSrc);
 
     return (*this);
   }
   template <int t_nSize>
-  BStringT& operator+=(_In_ const CStaticString<XCHAR, t_nSize>& strSrc) {
+  BStringT& operator+=(_In_ const CStaticString<char, t_nSize>& strSrc) {
     CThisSimpleString::operator+=(strSrc);
 
     return (*this);
   }
 
-  BStringT& operator+=(_In_ XCHAR ch) {
+  BStringT& operator+=(_In_ char ch) {
     CThisSimpleString::operator+=(ch);
 
     return (*this);
@@ -146,13 +143,13 @@ class BStringT : public CSimpleStringT<BaseType> {
 
   // Comparison
 
-  int Compare(_In_z_ PCXSTR psz) const {
+  int Compare(_In_z_ const char* psz) const {
     AMVENSURE(AmvIsValidString(psz));
     // AmvIsValidString guarantees that psz != NULL
     return (StringTraits::StringCompare(this->GetString(), psz));
   }
 
-  int CompareNoCase(_In_z_ PCXSTR psz) const {
+  int CompareNoCase(_In_z_ const char* psz) const {
     AMVENSURE(AmvIsValidString(psz));
     // AmvIsValidString guarantees that psz != NULL
     return (StringTraits::StringCompareIgnore(this->GetString(), psz));
@@ -173,9 +170,9 @@ class BStringT : public CSimpleStringT<BaseType> {
     if (nCount > 0) {
       int nNewLength = nLength - nCount;
       int nXCHARsToCopy = nLength - (iIndex + nCount) + 1;
-      PXSTR pszBuffer = this->GetBuffer();
-      memmove_s(pszBuffer + iIndex, nXCHARsToCopy * sizeof(XCHAR),
-                pszBuffer + iIndex + nCount, nXCHARsToCopy * sizeof(XCHAR));
+      char* pszBuffer = this->GetBuffer();
+      memmove_s(pszBuffer + iIndex, nXCHARsToCopy * sizeof(char),
+                pszBuffer + iIndex + nCount, nXCHARsToCopy * sizeof(char));
       this->ReleaseBufferSetLength(nNewLength);
     }
 
@@ -183,7 +180,7 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
   // Insert character 'ch' before index 'iIndex'
-  int Insert(_In_ int iIndex, _In_ XCHAR ch) {
+  int Insert(_In_ int iIndex, _In_ char ch) {
     if (iIndex < 0) iIndex = 0;
 
     if (iIndex > this->GetLength()) {
@@ -191,11 +188,11 @@ class BStringT : public CSimpleStringT<BaseType> {
     }
     int nNewLength = this->GetLength() + 1;
 
-    PXSTR pszBuffer = this->GetBuffer(nNewLength);
+    char* pszBuffer = this->GetBuffer(nNewLength);
 
     // move existing bytes down
-    memmove_s(pszBuffer + iIndex + 1, (nNewLength - iIndex) * sizeof(XCHAR),
-              pszBuffer + iIndex, (nNewLength - iIndex) * sizeof(XCHAR));
+    memmove_s(pszBuffer + iIndex + 1, (nNewLength - iIndex) * sizeof(char),
+              pszBuffer + iIndex, (nNewLength - iIndex) * sizeof(char));
     pszBuffer[iIndex] = ch;
 
     this->ReleaseBufferSetLength(nNewLength);
@@ -204,7 +201,7 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
   // Insert string 'psz' before index 'iIndex'
-  int Insert(_In_ int iIndex, _In_z_ PCXSTR psz) {
+  int Insert(_In_ int iIndex, _In_z_ const char* psz) {
     if (iIndex < 0) iIndex = 0;
 
     if (iIndex > this->GetLength()) {
@@ -217,14 +214,14 @@ class BStringT : public CSimpleStringT<BaseType> {
     if (nInsertLength > 0) {
       nNewLength += nInsertLength;
 
-      PXSTR pszBuffer = this->GetBuffer(nNewLength);
+      char* pszBuffer = this->GetBuffer(nNewLength);
       // move existing bytes down
       memmove_s(pszBuffer + iIndex + nInsertLength,
-                (nNewLength - iIndex - nInsertLength + 1) * sizeof(XCHAR),
+                (nNewLength - iIndex - nInsertLength + 1) * sizeof(char),
                 pszBuffer + iIndex,
-                (nNewLength - iIndex - nInsertLength + 1) * sizeof(XCHAR));
-      memcpy_s(pszBuffer + iIndex, nInsertLength * sizeof(XCHAR), psz,
-               nInsertLength * sizeof(XCHAR));
+                (nNewLength - iIndex - nInsertLength + 1) * sizeof(char));
+      memcpy_s(pszBuffer + iIndex, nInsertLength * sizeof(char), psz,
+               nInsertLength * sizeof(char));
       this->ReleaseBufferSetLength(nNewLength);
     }
 
@@ -232,7 +229,7 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
   // Replace all occurrences of character 'chOld' with character 'chNew'
-  int Replace(_In_ XCHAR chOld, _In_ XCHAR chNew) {
+  int Replace(_In_ char chOld, _In_ char chNew) {
     int nCount = 0;
 
     // short-circuit the nop case
@@ -240,7 +237,7 @@ class BStringT : public CSimpleStringT<BaseType> {
       // otherwise modify each character that matches in the string
       bool bCopied = false;
       // We don't actually write to pszBuffer until we've called GetBuffer().
-      PXSTR pszBuffer = const_cast<PXSTR>(this->GetString());
+      char* pszBuffer = const_cast<char*>(this->GetString());
 
       int nLength = this->GetLength();
       int iChar = 0;
@@ -266,7 +263,7 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
   // Replace all occurrences of string 'pszOld' with string 'pszNew'
-  int Replace(_In_z_ PCXSTR pszOld, _In_z_ PCXSTR pszNew) {
+  int Replace(_In_z_ const char* pszOld, _In_z_ const char* pszNew) {
     // can't have empty or NULL lpszOld
 
     // nSourceLen is in XCHARs
@@ -278,10 +275,10 @@ class BStringT : public CSimpleStringT<BaseType> {
     // loop once to figure out the size of the result string
     int nCount = 0;
     {
-      PCXSTR pszStart = this->GetString();
-      PCXSTR pszEnd = pszStart + this->GetLength();
+      const char* pszStart = this->GetString();
+      const char* pszEnd = pszStart + this->GetLength();
       while (pszStart < pszEnd) {
-        PCXSTR pszTarget;
+        const char* pszTarget;
         while ((pszTarget = StringTraits::StringFindString(pszStart, pszOld)) !=
                NULL) {
           nCount++;
@@ -297,22 +294,22 @@ class BStringT : public CSimpleStringT<BaseType> {
       int nOldLength = this->GetLength();
       int nNewLength = nOldLength + (nReplacementLen - nSourceLen) * nCount;
 
-      PXSTR pszBuffer = this->GetBuffer(__max(nNewLength, nOldLength));
+      char* pszBuffer = this->GetBuffer(__max(nNewLength, nOldLength));
 
-      PXSTR pszStart = pszBuffer;
-      PXSTR pszEnd = pszStart + nOldLength;
+      char* pszStart = pszBuffer;
+      char* pszEnd = pszStart + nOldLength;
 
       // loop again to actually do the work
       while (pszStart < pszEnd) {
-        PXSTR pszTarget;
+        char* pszTarget;
         while ((pszTarget = StringTraits::StringFindString(pszStart, pszOld)) !=
                NULL) {
           int nBalance =
               nOldLength - static_cast<int>(pszTarget - pszBuffer + nSourceLen);
-          memmove_s(pszTarget + nReplacementLen, nBalance * sizeof(XCHAR),
-                    pszTarget + nSourceLen, nBalance * sizeof(XCHAR));
-          memcpy_s(pszTarget, nReplacementLen * sizeof(XCHAR), pszNew,
-                   nReplacementLen * sizeof(XCHAR));
+          memmove_s(pszTarget + nReplacementLen, nBalance * sizeof(char),
+                    pszTarget + nSourceLen, nBalance * sizeof(char));
+          memcpy_s(pszTarget, nReplacementLen * sizeof(char), pszNew,
+                   nReplacementLen * sizeof(char));
           pszStart = pszTarget + nReplacementLen;
           pszTarget[nReplacementLen + nBalance] = 0;
           nOldLength += (nReplacementLen - nSourceLen);
@@ -327,21 +324,21 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
   // Remove all occurrences of character 'chRemove'
-  int Remove(_In_ XCHAR chRemove) {
+  int Remove(_In_ char chRemove) {
     int nLength = this->GetLength();
-    PXSTR pszBuffer = this->GetBuffer(nLength);
+    char* pszBuffer = this->GetBuffer(nLength);
 
-    PXSTR pszSource = pszBuffer;
-    PXSTR pszDest = pszBuffer;
-    PXSTR pszEnd = pszBuffer + nLength;
+    char* pszSource = pszBuffer;
+    char* pszDest = pszBuffer;
+    char* pszEnd = pszBuffer + nLength;
 
     while (pszSource < pszEnd) {
-      PXSTR pszNewSource = StringTraits::CharNext(pszSource);
+      char* pszNewSource = StringTraits::CharNext(pszSource);
       if (*pszSource != chRemove) {
         /* Copy the source to the destination.  Remember to copy all bytes of an
          * MBCS character */
         size_t NewSourceGap = (pszNewSource - pszSource);
-        PXSTR pszNewDest = pszDest + NewSourceGap;
+        char* pszNewDest = pszDest + NewSourceGap;
         size_t i = 0;
         for (i = 0; pszDest != pszNewDest && i < NewSourceGap; i++) {
           *pszDest = *pszSource;
@@ -358,19 +355,19 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (nCount);
   }
 
-  BStringT Tokenize(_In_z_ PCXSTR pszTokens, _In_ const int& iStart) const {
-    // BStringT Tokenize(_In_z_ PCXSTR pszTokens, _Inout_ int& iStart) const {
+  BStringT Tokenize(_In_z_ const char* pszTokens,
+                    _In_ const int& iStart) const {
     AMVASSERT(iStart >= 0);
 
     if (iStart < 0) AmvThrow("Invalid arguments");
 
-    if ((pszTokens == NULL) || (*pszTokens == (XCHAR)0)) {
+    if ((pszTokens == NULL) || (*pszTokens == static_cast<char>(0))) {
       if (iStart < this->GetLength()) {
         return (BStringT(this->GetString() + iStart, GetManager()));
       }
     } else {
-      PCXSTR pszPlace = this->GetString() + iStart;
-      PCXSTR pszEnd = this->GetString() + this->GetLength();
+      const char* pszPlace = this->GetString() + iStart;
+      const char* pszEnd = this->GetString() + this->GetLength();
       if (pszPlace < pszEnd) {
         int nIncluding = StringTraits::StringSpanIncluding(pszPlace, pszTokens);
 
@@ -397,7 +394,7 @@ class BStringT : public CSimpleStringT<BaseType> {
   // find routines
 
   // Find the first occurrence of character 'ch', starting at index 'iStart'
-  int Find(_In_ XCHAR ch, _In_ int iStart = 0) const throw() {
+  int Find(_In_ char ch, _In_ int iStart = 0) const throw() {
     // iStart is in XCHARs
     AMVASSERT(iStart >= 0);
 
@@ -408,7 +405,8 @@ class BStringT : public CSimpleStringT<BaseType> {
     }
 
     // find first single character
-    PCXSTR psz = StringTraits::StringFindChar(this->GetString() + iStart, ch);
+    const char* psz =
+        StringTraits::StringFindChar(this->GetString() + iStart, ch);
 
     // return -1 if not found and index otherwise
     return ((psz == NULL) ? -1 : static_cast<int>(psz - this->GetString()));
@@ -417,7 +415,7 @@ class BStringT : public CSimpleStringT<BaseType> {
   // look for a specific sub-string
 
   // Find the first occurrence of string 'pszSub', starting at index 'iStart'
-  int Find(_In_z_ PCXSTR pszSub, _In_ int iStart = 0) const throw() {
+  int Find(_In_z_ const char* pszSub, _In_ int iStart = 0) const throw() {
     // iStart is in XCHARs
     AMVASSERT(iStart >= 0);
     AMVASSERT(AmvIsValidString(pszSub));
@@ -432,7 +430,7 @@ class BStringT : public CSimpleStringT<BaseType> {
     }
 
     // find first matching substring
-    PCXSTR psz =
+    const char* psz =
         StringTraits::StringFindString(this->GetString() + iStart, pszSub);
 
     // return -1 for not found, distance from beginning otherwise
@@ -440,16 +438,17 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
   // Find the first occurrence of any of the characters in string 'pszCharSet'
-  int FindOneOf(_In_z_ PCXSTR pszCharSet) const throw() {
+  int FindOneOf(_In_z_ const char* pszCharSet) const throw() {
     AMVASSERT(AmvIsValidString(pszCharSet));
-    PCXSTR psz = StringTraits::StringScanSet(this->GetString(), pszCharSet);
+    const char* psz =
+        StringTraits::StringScanSet(this->GetString(), pszCharSet);
     return ((psz == NULL) ? -1 : static_cast<int>(psz - this->GetString()));
   }
 
   // Find the last occurrence of character 'ch'
-  int ReverseFind(_In_ XCHAR ch) const throw() {
+  int ReverseFind(_In_ char ch) const throw() {
     // find last single character
-    PCXSTR psz = StringTraits::StringFindCharRev(this->GetString(), ch);
+    const char* psz = StringTraits::StringFindCharRev(this->GetString(), ch);
 
     // return -1 if not found, distance from beginning otherwise
     return ((psz == NULL) ? -1 : static_cast<int>(psz - this->GetString()));
@@ -460,7 +459,7 @@ class BStringT : public CSimpleStringT<BaseType> {
   // Convert the string to uppercase
   BStringT& MakeUpper() {
     int nLength = this->GetLength();
-    PXSTR pszBuffer = this->GetBuffer(nLength);
+    char* pszBuffer = this->GetBuffer(nLength);
     StringTraits::StringUppercase(pszBuffer, nLength + 1);
     this->ReleaseBufferSetLength(nLength);
 
@@ -470,7 +469,7 @@ class BStringT : public CSimpleStringT<BaseType> {
   // Convert the string to lowercase
   BStringT& MakeLower() {
     int nLength = this->GetLength();
-    PXSTR pszBuffer = this->GetBuffer(nLength);
+    char* pszBuffer = this->GetBuffer(nLength);
     StringTraits::StringLowercase(pszBuffer, nLength + 1);
     this->ReleaseBufferSetLength(nLength);
 
@@ -480,7 +479,7 @@ class BStringT : public CSimpleStringT<BaseType> {
   // Reverse the string
   BStringT& MakeReverse() {
     int nLength = this->GetLength();
-    PXSTR pszBuffer = this->GetBuffer(nLength);
+    char* pszBuffer = this->GetBuffer(nLength);
     StringTraits::StringReverse(pszBuffer);
     this->ReleaseBufferSetLength(nLength);
 
@@ -492,8 +491,8 @@ class BStringT : public CSimpleStringT<BaseType> {
   // Remove all trailing whitespace
   BStringT& TrimRight() {
     // find beginning of trailing spaces by starting at beginning (DBCS aware)
-    PCXSTR psz = this->GetString();
-    PCXSTR pszLast = NULL;
+    const char* psz = this->GetString();
+    const char* pszLast = NULL;
 
     while (*psz != 0) {
       if (StringTraits::IsSpace(*psz)) {
@@ -518,7 +517,7 @@ class BStringT : public CSimpleStringT<BaseType> {
   BStringT& TrimLeft() {
     // find first non-space character
 
-    PCXSTR psz = this->GetString();
+    const char* psz = this->GetString();
 
     while (StringTraits::IsSpace(*psz)) {
       psz = StringTraits::CharNext(psz);
@@ -527,11 +526,11 @@ class BStringT : public CSimpleStringT<BaseType> {
     if (psz != this->GetString()) {
       // fix up data and length
       int iFirst = static_cast<int>(psz - this->GetString());
-      PXSTR pszBuffer = this->GetBuffer(this->GetLength());
+      char* pszBuffer = this->GetBuffer(this->GetLength());
       psz = pszBuffer + iFirst;
       int nDataLength = this->GetLength() - iFirst;
-      memmove_s(pszBuffer, (this->GetLength() + 1) * sizeof(XCHAR), psz,
-                (nDataLength + 1) * sizeof(XCHAR));
+      memmove_s(pszBuffer, (this->GetLength() + 1) * sizeof(char), psz,
+                (nDataLength + 1) * sizeof(char));
       this->ReleaseBufferSetLength(nDataLength);
     }
 
@@ -542,25 +541,25 @@ class BStringT : public CSimpleStringT<BaseType> {
   BStringT& Trim() { return (TrimRight().TrimLeft()); }
 
   // Remove all leading and trailing occurrences of character 'chTarget'
-  BStringT& Trim(_In_ XCHAR chTarget) {
+  BStringT& Trim(_In_ char chTarget) {
     return (TrimRight(chTarget).TrimLeft(chTarget));
   }
 
   /* Remove all leading and trailing occurrences of any of the characters in the
    * string 'pszTargets' */
-  BStringT& Trim(_In_z_ PCXSTR pszTargets) {
+  BStringT& Trim(_In_z_ const char* pszTargets) {
     return (TrimRight(pszTargets).TrimLeft(pszTargets));
   }
 
   // trimming anything (either side)
 
   // Remove all trailing occurrences of character 'chTarget'
-  BStringT& TrimRight(_In_ XCHAR chTarget) {
+  BStringT& TrimRight(_In_ char chTarget) {
     // find beginning of trailing matches
     // by starting at beginning (DBCS aware)
 
-    PCXSTR psz = this->GetString();
-    PCXSTR pszLast = NULL;
+    const char* psz = this->GetString();
+    const char* pszLast = NULL;
 
     while (*psz != 0) {
       if (*psz == chTarget) {
@@ -584,7 +583,7 @@ class BStringT : public CSimpleStringT<BaseType> {
 
   /* Remove all trailing occurrences of any of the characters in string
    * 'pszTargets' */
-  BStringT& TrimRight(_In_z_ PCXSTR pszTargets) {
+  BStringT& TrimRight(_In_z_ const char* pszTargets) {
     // if we're not trimming anything, we're not doing any work
     if ((pszTargets == NULL) || (*pszTargets == 0)) {
       return (*this);
@@ -593,8 +592,8 @@ class BStringT : public CSimpleStringT<BaseType> {
     // find beginning of trailing matches
     // by starting at beginning (DBCS aware)
 
-    PCXSTR psz = this->GetString();
-    PCXSTR pszLast = NULL;
+    const char* psz = this->GetString();
+    const char* pszLast = NULL;
 
     while (*psz != 0) {
       if (StringTraits::StringFindChar(pszTargets, *psz) != NULL) {
@@ -617,9 +616,9 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
   // Remove all leading occurrences of character 'chTarget'
-  BStringT& TrimLeft(_In_ XCHAR chTarget) {
+  BStringT& TrimLeft(_In_ char chTarget) {
     // find first non-matching character
-    PCXSTR psz = this->GetString();
+    const char* psz = this->GetString();
 
     while (chTarget == *psz) {
       psz = StringTraits::CharNext(psz);
@@ -628,11 +627,11 @@ class BStringT : public CSimpleStringT<BaseType> {
     if (psz != this->GetString()) {
       // fix up data and length
       int iFirst = static_cast<int>(psz - this->GetString());
-      PXSTR pszBuffer = this->GetBuffer(this->GetLength());
+      char* pszBuffer = this->GetBuffer(this->GetLength());
       psz = pszBuffer + iFirst;
       int nDataLength = this->GetLength() - iFirst;
-      memmove_s(pszBuffer, (this->GetLength() + 1) * sizeof(XCHAR), psz,
-                (nDataLength + 1) * sizeof(XCHAR));
+      memmove_s(pszBuffer, (this->GetLength() + 1) * sizeof(char), psz,
+                (nDataLength + 1) * sizeof(char));
       this->ReleaseBufferSetLength(nDataLength);
     }
 
@@ -641,13 +640,13 @@ class BStringT : public CSimpleStringT<BaseType> {
 
   /* Remove all leading occurrences of any of the characters in string
    * 'pszTargets' */
-  BStringT& TrimLeft(_In_z_ PCXSTR pszTargets) {
+  BStringT& TrimLeft(_In_z_ const char* pszTargets) {
     // if we're not trimming anything, we're not doing any work
     if ((pszTargets == NULL) || (*pszTargets == 0)) {
       return (*this);
     }
 
-    PCXSTR psz = this->GetString();
+    const char* psz = this->GetString();
     while ((*psz != 0) &&
            (StringTraits::StringFindChar(pszTargets, *psz) != NULL)) {
       psz = StringTraits::CharNext(psz);
@@ -656,11 +655,11 @@ class BStringT : public CSimpleStringT<BaseType> {
     if (psz != this->GetString()) {
       // fix up data and length
       int iFirst = static_cast<int>(psz - this->GetString());
-      PXSTR pszBuffer = this->GetBuffer(this->GetLength());
+      char* pszBuffer = this->GetBuffer(this->GetLength());
       psz = pszBuffer + iFirst;
       int nDataLength = this->GetLength() - iFirst;
-      memmove_s(pszBuffer, (this->GetLength() + 1) * sizeof(XCHAR), psz,
-                (nDataLength + 1) * sizeof(XCHAR));
+      memmove_s(pszBuffer, (this->GetLength() + 1) * sizeof(char), psz,
+                (nDataLength + 1) * sizeof(char));
       this->ReleaseBufferSetLength(nDataLength);
     }
 
@@ -728,7 +727,7 @@ class BStringT : public CSimpleStringT<BaseType> {
 
   /* Return the substring consisting of the leftmost characters in the set
    * 'pszCharSet' */
-  BStringT SpanIncluding(_In_z_ PCXSTR pszCharSet) const {
+  BStringT SpanIncluding(_In_z_ const char* pszCharSet) const {
     AMVASSERT(AmvIsValidString(pszCharSet));
     if (pszCharSet == NULL) AmvThrow("Invalid arguments");
 
@@ -738,7 +737,7 @@ class BStringT : public CSimpleStringT<BaseType> {
 
   /* Return the substring consisting of the leftmost characters not in the set
    * 'pszCharSet' */
-  BStringT SpanExcluding(_In_z_ PCXSTR pszCharSet) const {
+  BStringT SpanExcluding(_In_z_ const char* pszCharSet) const {
     AMVASSERT(AmvIsValidString(pszCharSet));
     if (pszCharSet == NULL) AmvThrow("Invalid arguments");
 
@@ -756,7 +755,8 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (strResult);
   }
 
-  friend BStringT operator+(_In_ const BStringT& str1, _In_z_ PCXSTR psz2) {
+  friend BStringT operator+(_In_ const BStringT& str1,
+                            _In_z_ const char* psz2) {
     BStringT strResult(str1.GetManager());
 
     CThisSimpleString::Concatenate(strResult, str1, str1.GetLength(), psz2,
@@ -765,7 +765,8 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (strResult);
   }
 
-  friend BStringT operator+(_In_z_ PCXSTR psz1, _In_ const BStringT& str2) {
+  friend BStringT operator+(_In_z_ const char* psz1,
+                            _In_ const BStringT& str2) {
     BStringT strResult(str2.GetManager());
 
     CThisSimpleString::Concatenate(strResult, psz1,
@@ -780,7 +781,7 @@ class BStringT : public CSimpleStringT<BaseType> {
   friend BStringT operator+(_In_ const BStringT& str1,
                             _In_ _CSTRING_CHAR_T ch2) {
     BStringT strResult(str1.GetManager());
-    XCHAR chTemp = XCHAR(ch2);
+    char chTemp = char(ch2);
 
     CThisSimpleString::Concatenate(strResult, str1, str1.GetLength(), &chTemp,
                                    1);
@@ -791,7 +792,7 @@ class BStringT : public CSimpleStringT<BaseType> {
   friend BStringT operator+(_In_ _CSTRING_CHAR_T ch1,
                             _In_ const BStringT& str2) {
     BStringT strResult(str2.GetManager());
-    XCHAR chTemp = XCHAR(ch1);
+    char chTemp = char(ch1);
 
     CThisSimpleString::Concatenate(strResult, &chTemp, 1, str2,
                                    str2.GetLength());
@@ -805,11 +806,11 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
   friend bool operator==(_In_ const BStringT& str1,
-                         _In_z_ PCXSTR psz2) throw() {
+                         _In_z_ const char* psz2) throw() {
     return (str1.Compare(psz2) == 0);
   }
 
-  friend bool operator==(_In_z_ PCXSTR psz1,
+  friend bool operator==(_In_z_ const char* psz1,
                          _In_ const BStringT& str2) throw() {
     return (str2.Compare(psz1) == 0);
   }
@@ -820,11 +821,11 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
   friend bool operator!=(_In_ const BStringT& str1,
-                         _In_z_ PCXSTR psz2) throw() {
+                         _In_z_ const char* psz2) throw() {
     return (str1.Compare(psz2) != 0);
   }
 
-  friend bool operator!=(_In_z_ PCXSTR psz1,
+  friend bool operator!=(_In_z_ const char* psz1,
                          _In_ const BStringT& str2) throw() {
     return (str2.Compare(psz1) != 0);
   }
@@ -834,11 +835,13 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (str1.Compare(str2) < 0);
   }
 
-  friend bool operator<(_In_ const BStringT& str1, _In_z_ PCXSTR psz2) throw() {
+  friend bool operator<(_In_ const BStringT& str1,
+                        _In_z_ const char* psz2) throw() {
     return (str1.Compare(psz2) < 0);
   }
 
-  friend bool operator<(_In_z_ PCXSTR psz1, _In_ const BStringT& str2) throw() {
+  friend bool operator<(_In_z_ const char* psz1,
+                        _In_ const BStringT& str2) throw() {
     return (str2.Compare(psz1) > 0);
   }
 
@@ -847,11 +850,13 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (str1.Compare(str2) > 0);
   }
 
-  friend bool operator>(_In_ const BStringT& str1, _In_z_ PCXSTR psz2) throw() {
+  friend bool operator>(_In_ const BStringT& str1,
+                        _In_z_ const char* psz2) throw() {
     return (str1.Compare(psz2) > 0);
   }
 
-  friend bool operator>(_In_z_ PCXSTR psz1, _In_ const BStringT& str2) throw() {
+  friend bool operator>(_In_z_ const char* psz1,
+                        _In_ const BStringT& str2) throw() {
     return (str2.Compare(psz1) < 0);
   }
 
@@ -861,11 +866,11 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
   friend bool operator<=(_In_ const BStringT& str1,
-                         _In_z_ PCXSTR psz2) throw() {
+                         _In_z_ const char* psz2) throw() {
     return (str1.Compare(psz2) <= 0);
   }
 
-  friend bool operator<=(_In_z_ PCXSTR psz1,
+  friend bool operator<=(_In_z_ const char* psz1,
                          _In_ const BStringT& str2) throw() {
     return (str2.Compare(psz1) >= 0);
   }
@@ -876,28 +881,28 @@ class BStringT : public CSimpleStringT<BaseType> {
   }
 
   friend bool operator>=(_In_ const BStringT& str1,
-                         _In_z_ PCXSTR psz2) throw() {
+                         _In_z_ const char* psz2) throw() {
     return (str1.Compare(psz2) >= 0);
   }
 
-  friend bool operator>=(_In_z_ PCXSTR psz1,
+  friend bool operator>=(_In_z_ const char* psz1,
                          _In_ const BStringT& str2) throw() {
     return (str2.Compare(psz1) <= 0);
   }
 
-  friend bool operator==(_In_ XCHAR ch1, _In_ const BStringT& str2) throw() {
+  friend bool operator==(_In_ char ch1, _In_ const BStringT& str2) throw() {
     return ((str2.GetLength() == 1) && (str2[0] == ch1));
   }
 
-  friend bool operator==(_In_ const BStringT& str1, _In_ XCHAR ch2) throw() {
+  friend bool operator==(_In_ const BStringT& str1, _In_ char ch2) throw() {
     return ((str1.GetLength() == 1) && (str1[0] == ch2));
   }
 
-  friend bool operator!=(_In_ XCHAR ch1, _In_ const BStringT& str2) throw() {
+  friend bool operator!=(_In_ char ch1, _In_ const BStringT& str2) throw() {
     return ((str2.GetLength() != 1) || (str2[0] != ch1));
   }
 
-  friend bool operator!=(_In_ const BStringT& str1, _In_ XCHAR ch2) throw() {
+  friend bool operator!=(_In_ const BStringT& str1, _In_ char ch2) throw() {
     return ((str1.GetLength() != 1) || (str1[0] != ch2));
   }
 };
