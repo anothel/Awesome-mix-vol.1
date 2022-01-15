@@ -55,7 +55,7 @@ BString str("ABC|DEF|EEE|");
 BString token;
 int pos = 0;
 while ((token  = str.Tokenize("|", pos)) != "")
-    printf("%s\n", token);
+    printf("%s\n", token.GetBuffer());
 
     // bstring.Tokenize();
     // bstring.Find();
