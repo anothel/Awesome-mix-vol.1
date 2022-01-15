@@ -50,7 +50,7 @@ TEST(BStringT, func) {
 
     bstring.Remove(static_cast<char>(95));
     ASSERT_EQ(std::string(bstring), std::string(sTest));
-
+ 
 // BString str("ABC|DEF|EEE|");
 // BString token;
 // int pos = 0;
