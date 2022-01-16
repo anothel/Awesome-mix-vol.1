@@ -130,6 +130,7 @@ template <typename BaseType>
 class CSimpleStringT {
  public:
   explicit CSimpleStringT(_Inout_ IAmvStringMgr* pStringMgr) {
+    log1;
     AMVENSURE(pStringMgr != NULL);
     BStringData* pData = pStringMgr->GetNilString();
     Attach(pData);
@@ -139,33 +140,35 @@ class CSimpleStringT {
     Attach(CloneData(strSrc.GetData()));
   }
 
-  CSimpleStringT(_In_z_ const char* pszSrc, _Inout_ IAmvStringMgr* pStringMgr) {
-    AMVENSURE(pStringMgr != NULL);
+  // CSimpleStringT(_In_z_ const char* pszSrc, _Inout_ IAmvStringMgr* pStringMgr) {
+  //   AMVENSURE(pStringMgr != NULL);
 
-    int nLength = StringLength(pszSrc);
-    BStringData* pData = pStringMgr->Allocate(nLength, sizeof(char));
-    if (pData == NULL) {
-      ThrowMemoryException();
-    }
-    Attach(pData);
-    SetLength(nLength);
-    CopyChars(m_pszData, nLength, pszSrc, nLength);
-  }
+  //   int nLength = StringLength(pszSrc);
+  //   BStringData* pData = pStringMgr->Allocate(nLength, sizeof(char));
+  //   if (pData == NULL) {
+  //     ThrowMemoryException();
+  //   }
+  //   Attach(pData);
+  //   SetLength(nLength);
+  //   CopyChars(m_pszData, nLength, pszSrc, nLength);
+  // }
 
-  CSimpleStringT(_In_reads_(nLength) const char* pchSrc, _In_ int nLength,
-                 _Inout_ IAmvStringMgr* pStringMgr) {
-    AMVENSURE(pStringMgr != NULL);
 
-    if (pchSrc == NULL && nLength != 0) AmvThrow("Invalid arguments");
+  // Todo(jpk, 20220116): unsigned char 형으로도 사용할 수 있도록 만들어야함
+  // CSimpleStringT(_In_reads_(nLength) const unsigned char* puchSrc, _In_ int nLength,
+  //                _Inout_ IAmvStringMgr* pStringMgr) {
+  //   AMVENSURE(pStringMgr != NULL);
 
-    BStringData* pData = pStringMgr->Allocate(nLength, sizeof(char));
-    if (pData == NULL) {
-      ThrowMemoryException();
-    }
-    Attach(pData);
-    SetLength(nLength);
-    CopyChars(m_pszData, nLength, pchSrc, nLength);
-  }
+  //   if (pchSrc == NULL && nLength != 0) AmvThrow("Invalid arguments");
+
+  //   BStringData* pData = pStringMgr->Allocate(nLength, sizeof(char));
+  //   if (pData == NULL) {
+  //     ThrowMemoryException();
+  //   }
+  //   Attach(pData);
+  //   SetLength(nLength);
+  //   CopyChars(m_pszData, nLength, pchSrc, nLength);
+  // }
 
   ~CSimpleStringT() throw() {
     BStringData* pData = GetData();
@@ -236,7 +239,17 @@ class CSimpleStringT {
     return (m_pszData[iChar]);
   }
 
-  operator const char*() const throw() { return (m_pszData); }
+  operator const char*() const throw() {
+    log1;
+    log1;
+    log1;
+    log1;
+    log1;
+    log1;
+    log1;
+    log1;
+    return (m_pszData);
+  }
 
   void Append(_In_z_ const char* pszSrc) {
     Append(pszSrc, StringLength(pszSrc));

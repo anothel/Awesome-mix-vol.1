@@ -16,62 +16,51 @@ class BStringT : public CSimpleStringT<BaseType> {
   typedef StringTraits StrTraits;
 
  public:
-  BStringT() throw() : CThisSimpleString(StringTraits::GetDefaultManager()) {}
+  BStringT() throw() : CThisSimpleString(StringTraits::GetDefaultManager()) {
+    log1;
+  }
 
-  explicit BStringT(_In_ IAmvStringMgr* pStringMgr) throw()
-      : CThisSimpleString(pStringMgr) {}
+  // explicit BStringT(_In_ IAmvStringMgr* pStringMgr) throw()
+  //     : CThisSimpleString(pStringMgr) {}
 
-  // Copy constructor
-  explicit BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc) {}
+  // // Copy constructor
+  // explicit BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc) {}
 
   // Construct from CSimpleStringT
   operator CSimpleStringT<BaseType>&() {
+    log1;
     return *(CSimpleStringT<BaseType>*)this;
   }
 
-  explicit BStringT(_In_ const CSimpleStringT<BaseType>& strSrc)
-      : CThisSimpleString(strSrc) {}
+  // explicit BStringT(_In_ const CSimpleStringT<BaseType>& strSrc)
+  //     : CThisSimpleString(strSrc) {}
 
   explicit BStringT(_In_opt_z_ const char* pszSrc)
       : CThisSimpleString(StringTraits::GetDefaultManager()) {
+        log1;
     *this = pszSrc;
   }
 
-  BStringT(_In_opt_z_ const char* pszSrc, _In_ IAmvStringMgr* pStringMgr)
-      : CThisSimpleString(pStringMgr) {
-    *this = pszSrc;
-  }
+  // BStringT(_In_opt_z_ const char* pszSrc, _In_ IAmvStringMgr* pStringMgr)
+  //     : CThisSimpleString(pStringMgr) {
+  //   *this = pszSrc;
+  // }
 
-  CSTRING_EXPLICIT BStringT(_In_z_ const unsigned char* pszSrc)
-      : CThisSimpleString(StringTraits::GetDefaultManager()) {
-    *this = reinterpret_cast<const char*>(pszSrc);
-  }
-
-  BStringT(_In_opt_z_ const unsigned char* pszSrc,
-           _In_ IAmvStringMgr* pStringMgr)
-      : CThisSimpleString(pStringMgr) {
-    *this = reinterpret_cast<const char*>(pszSrc);
-  }
-
-#define _CSTRING_CHAR_T char
-  CSTRING_EXPLICIT BStringT(_In_ _CSTRING_CHAR_T ch, _In_ int nLength = 1)
-      : CThisSimpleString(StringTraits::GetDefaultManager()) {
-    AMVASSERT(nLength >= 0);
-    if (nLength > 0) {
-      char* pszBuffer = this->GetBuffer(nLength);
-      StringTraits::FloodCharacters(char(ch), nLength, pszBuffer);
-      this->ReleaseBufferSetLength(nLength);
-    }
-  }
-#undef _CSTRING_CHAR_T
+  // BStringT(_In_opt_z_ const unsigned char* pszSrc,
+  //          _In_ IAmvStringMgr* pStringMgr)
+  //     : CThisSimpleString(pStringMgr) {
+  //   *this = reinterpret_cast<const char*>(pszSrc);
+  // }
 
  public:
-  BStringT(_In_reads_(nLength) const char* pch, _In_ int nLength)
-      : CThisSimpleString(pch, nLength, StringTraits::GetDefaultManager()) {}
+  BStringT(_In_reads_(nLength) const unsigned char* pch, _In_ int nLength)
+      : CThisSimpleString(pch, nLength, StringTraits::GetDefaultManager()) {
+        log1;
+      }
 
-  BStringT(_In_reads_(nLength) const char* pch, _In_ int nLength,
-           _In_ IAmvStringMgr* pStringMgr)
-      : CThisSimpleString(pch, nLength, pStringMgr) {}
+  // BStringT(_In_reads_(nLength) const char* pch, _In_ int nLength,
+  //          _In_ IAmvStringMgr* pStringMgr)
+  //     : CThisSimpleString(pch, nLength, pStringMgr) {}
 
   // Destructor
   ~BStringT() throw() {}
