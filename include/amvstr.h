@@ -1,418 +1,357 @@
+// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+
+#ifndef AMVSTR_H_
+#define AMVSTR_H_
+
 #include <cctype>
 #include <cstring>
 
+#include "include/amvdefine.h"
 #include "include/amvmem.h"
 #include "include/amvsimpstr.h"
-#include "include/amvdefine.h"
 #include "include/bstringt.h"
 
-namespace awesome_ATL {
+namespace AMV {
 
-class CAtlStringMgr :
-	public IAtlStringMgr
-{
-public:
-	CAtlStringMgr(_In_opt_ IAtlMemMgr* pMemMgr = NULL) throw() :
-		m_pMemMgr( pMemMgr )
-	{
-		m_nil.SetManager( this );
-	}
-	virtual ~CAtlStringMgr() throw()
-	{
-	}
-	void SetMemoryManager(_In_ IAtlMemMgr* pMemMgr) throw()
-	{
-		ATLASSUME( m_pMemMgr == NULL );
-		m_pMemMgr = pMemMgr;
-	}
+class CAmvStringMgr : public IAmvStringMgr {
+ public:
+  explicit CAmvStringMgr(_In_opt_ IAmvMemMgr* pMemMgr = NULL) throw()
+      : m_pMemMgr(pMemMgr) {
+    m_nil.SetManager(this);
+  }
 
-	static IAtlStringMgr* GetInstance()
-	{
-		static CWin32Heap strHeap;
-		static CAtlStringMgr strMgr(&strHeap);
+  virtual ~CAmvStringMgr() throw() {}
+  void SetMemoryManager(_In_ IAmvMemMgr* pMemMgr) throw() {
+    AMVASSUME(m_pMemMgr == NULL);
+    m_pMemMgr = pMemMgr;
+  }
 
-		return &strMgr;
-	}
-// IAtlStringMgr
-public:
-	virtual BStringData* Allocate(
-		_In_ int nChars,
-		_In_ int nCharSize) throw()
-	{
-		ATLENSURE_RETURN_VAL( nChars>=0, NULL );
+  static IAmvStringMgr* GetInstance() {
+    static CAmvHeap strHeap;
+    static CAmvStringMgr strMgr(&strHeap);
 
-		size_t nTotalSize;
-		BStringData* pData;
-		size_t nDataBytes;
+    return &strMgr;
+  }
 
-		if( FAILED(::awesome_ATL::AtlAdd(&nChars, nChars, 1)) )
-		{
-			return NULL;
-		}
+  // IAmvStringMgr
+ public:
+  virtual BStringData* Allocate(_In_ int nChars, _In_ int nCharSize) throw() {
+    AMVENSURE_RETURN_VAL(nChars >= 0, NULL);
 
-		int nAlignedChars = ::awesome_ATL::AtlAlignUp( nChars, 8 );  // Prevent excessive reallocation.  The heap will usually round up anyway.
-		ATLENSURE_RETURN_VAL( nChars<=nAlignedChars, NULL );
+    size_t nTotalSize;
+    BStringData* pData;
+    size_t nDataBytes;
 
-		if(	FAILED(::awesome_ATL::AtlMultiply(&nDataBytes, static_cast<size_t>(nAlignedChars), static_cast<size_t>(nCharSize))) ||
-			FAILED(::awesome_ATL::AtlAdd(&nTotalSize, static_cast<size_t>(sizeof( BStringData )), nDataBytes)))
-		{
-			return NULL;
-		}
-		pData = static_cast< BStringData* >( m_pMemMgr->Allocate( nTotalSize ) );
-		if( pData == NULL )
-		{
-			return( NULL );
-		}
-		pData->pStringMgr = this;
-		pData->nRefs = 1;
-		pData->nAllocLength = nAlignedChars - 1;
-		pData->nDataLength = 0;
+    if (FAILED(::AMV::AmvAdd(&nChars, nChars, 1))) {
+      return NULL;
+    }
 
-		return( pData );
-	}
-	virtual void Free(_In_ BStringData* pData) throw()
-	{
-		ATLASSUME(pData != NULL);
-		ATLASSERT(pData->pStringMgr == this);
+    // Prevent excessive reallocation. The heap will usually round up anyway.
+    int nAlignedChars = ::AMV::AmvAlignUp(nChars, 8);
+    AMVENSURE_RETURN_VAL(nChars <= nAlignedChars, NULL);
 
-		m_pMemMgr->Free( pData );
-	}
-	virtual BStringData* Reallocate(
-		_Inout_ BStringData* pData,
-		_In_ int nChars,
-		_In_ int nCharSize) throw()
-	{
-		ATLENSURE_RETURN_VAL( nChars>=0, NULL );
-		ATLASSERT( pData->pStringMgr == this );
+    if (FAILED(::AMV::AmvMultiply(&nDataBytes,
+                                  static_cast<size_t>(nAlignedChars),
+                                  static_cast<size_t>(nCharSize))) ||
+        FAILED(::AMV::AmvAdd(&nTotalSize,
+                             static_cast<size_t>(sizeof(BStringData)),
+                             nDataBytes))) {
+      return NULL;
+    }
+    pData = static_cast<BStringData*>(m_pMemMgr->Allocate(nTotalSize));
+    if (pData == NULL) {
+      return (NULL);
+    }
+    pData->pStringMgr = this;
+    pData->nRefs = 1;
+    pData->nAllocLength = nAlignedChars - 1;
+    pData->nDataLength = 0;
 
-		BStringData* pNewData;
-		ULONG nTotalSize;
-		ULONG nDataBytes;
+    return (pData);
+  }
 
-		if( FAILED(::awesome_ATL::AtlAdd(&nChars, nChars, 1)) )
-		{
-			return NULL;
-		}
+  virtual void Free(_In_ BStringData* pData) throw() {
+    AMVASSUME(pData != NULL);
+    AMVASSERT(pData->pStringMgr == this);
 
-		int nAlignedChars = ::awesome_ATL::AtlAlignUp( nChars, 8 );  // Prevent excessive reallocation.  The heap will usually round up anyway.
-		ATLENSURE_RETURN_VAL( nChars<=nAlignedChars, NULL );
+    m_pMemMgr->Free(pData);
+  }
 
-		if(	FAILED(::awesome_ATL::AtlMultiply(&nDataBytes, static_cast<ULONG>(nAlignedChars), static_cast<ULONG>(nCharSize))) ||
-			FAILED(::awesome_ATL::AtlAdd(&nTotalSize, static_cast<ULONG>(sizeof( BStringData )), nDataBytes)))
-		{
-			return NULL;
-		}
-		pNewData = static_cast< BStringData* >( m_pMemMgr->Reallocate( pData, nTotalSize ) );
-		if( pNewData == NULL )
-		{
-			return NULL;
-		}
-		pNewData->nAllocLength = nAlignedChars - 1;
+  virtual BStringData* Reallocate(_Inout_ BStringData* pData, _In_ int nChars,
+                                  _In_ int nCharSize) throw() {
+    AMVENSURE_RETURN_VAL(nChars >= 0, NULL);
+    AMVASSERT(pData->pStringMgr == this);
 
-		return pNewData;
-	}
-	virtual BStringData* GetNilString() throw()
-	{
-		m_nil.AddRef();
-		return &m_nil;
-	}
-	virtual IAtlStringMgr* Clone() throw()
-	{
-		return this;
-	}
+    BStringData* pNewData;
+    ULONG nTotalSize;
+    ULONG nDataBytes;
 
-protected:
-	IAtlMemMgr* m_pMemMgr;
-	CNilStringData m_nil;
-private:
+    if (FAILED(::AMV::AmvAdd(&nChars, nChars, 1))) {
+      return NULL;
+    }
+
+    // Prevent excessive reallocation. The heap will usually round up anyway.
+    int nAlignedChars = ::AMV::AmvAlignUp(nChars, 8);
+    AMVENSURE_RETURN_VAL(nChars <= nAlignedChars, NULL);
+
+    if (FAILED(::AMV::AmvMultiply(&nDataBytes,
+                                  static_cast<ULONG>(nAlignedChars),
+                                  static_cast<ULONG>(nCharSize))) ||
+        FAILED(::AMV::AmvAdd(&nTotalSize,
+                             static_cast<ULONG>(sizeof(BStringData)),
+                             nDataBytes))) {
+      return NULL;
+    }
+    pNewData =
+        static_cast<BStringData*>(m_pMemMgr->Reallocate(pData, nTotalSize));
+    if (pNewData == NULL) {
+      return NULL;
+    }
+    pNewData->nAllocLength = nAlignedChars - 1;
+
+    return pNewData;
+  }
+
+  virtual BStringData* GetNilString() throw() {
+    m_nil.AddRef();
+    return &m_nil;
+  }
+
+  virtual IAmvStringMgr* Clone() throw() { return this; }
+
+ protected:
+  IAmvMemMgr* m_pMemMgr;
+  CNilStringData m_nil;
+
+ private:
 };
 
 template <class ChTraits>
-inline typename ChTraits::PCXSTR strstrT(typename ChTraits::PCXSTR pStr,typename ChTraits::PCXSTR pCharSet);
+inline const char* strstrT(const char* pStr, const char* pCharSet);
 
-template< typename _CharType = char >
-class ChTraitsOS :
-	public ChTraitsBase< _CharType >
-{
-public:
-	static int tclen(_In_z_ LPCSTR p) throw()
-	{
-		ATLASSERT(p != NULL);
-		LPCSTR pnext = CharNext(p);
-		return ((pnext-p)>1) ? 2 : 1;
-	}
-	static LPCSTR strstr(
-		_In_z_ LPCSTR pStr,
-		_In_z_ LPCSTR pCharSet) throw()
-	{
-		return strstrT< ChTraitsOS<typename ChTraitsBase<_CharType>::XCHAR> >(pStr,pCharSet);
-	}
-	static int strspn(
-		_In_z_ const _CharType* pStr,
-		_In_z_ const _CharType* pCharSet) throw()
-	{
-		ATLASSERT(pStr != NULL);
-		int nRet = 0;
-		_CharType* p = const_cast<_CharType*>(pStr);
-		while (*p != 0)
-		{
-			_CharType* pNext = CharNext(p);
-			if(pNext > p + 1)
-			{
-				if(strchr_db(pCharSet, *p, *(p+1)) == NULL)
-					break;
-				nRet += 2;
-			}
-			else
-			{
-				if(strchr(pCharSet, *p) == NULL)
-					break;
-				nRet++;
-			}
-			p = pNext;
-		}
-		return nRet;
-	}
-	static int strcspn(
-		_In_z_ const _CharType* pStr,
-		_In_z_ const _CharType* pCharSet) throw()
-	{
-		ATLASSERT(pStr != NULL);
-		int nRet = 0;
-		_CharType* p = const_cast<_CharType*>(pStr);
-		while (*p != 0)
-		{
-			_CharType* pNext = CharNext(p);
-			if(pNext > p + 1)
-			{
-				if(strchr_db(pCharSet, *p, *(p+1)) != NULL)
-					break;
-				nRet += 2;
-			}
-			else
-			{
-				if(strchr(pCharSet, *p) != NULL)
-					break;
-				nRet++;
-			}
-			p = pNext;
-		}
-		return nRet;
-	}
-	static LPCSTR strpbrk(
-		_In_z_ LPCSTR p,
-		_In_z_ LPCSTR lpszCharSet) throw()
-	{
-		int nRet=0;
-		nRet=strcspn(p,lpszCharSet);
-		if (p[nRet]){
-			p+=nRet;
-			return p;
-		}
-		return NULL;
-	}
+template <typename _CharType = char>
+class ChTraitsOS {
+ public:
+  static int tclen(_In_z_ const char* p) throw() {
+    AMVASSERT(p != NULL);
+    const char* pnext = CharNext(p);
+    return ((pnext - p) > 1) ? 2 : 1;
+  }
 
-	static _CharType* CharNext(_In_ const _CharType* p) throw()
-	{
-		return AtlCharNext(p);
-	}
+  _Ret_maybenull_z_ static const char* strchr(_In_z_ const char* p,
+                                              _In_ char ch) throw() {
+    return AmvstrchrT(p, ch);
+  }
 
-	static int IsDigit(_In_ _CharType ch) throw()
-	{
-		return isdigit(ch);
-	}
+  static int strspn(_In_z_ const _CharType* pStr,
+                    _In_z_ const _CharType* pCharSet) throw() {
+    AMVASSERT(pStr != NULL);
+    int nRet = 0;
+    _CharType* p = const_cast<_CharType*>(pStr);
+    while (*p != 0) {
+      _CharType* pNext = CharNext(p);
+      if (pNext > p + 1) {
+        if (strchr_db(pCharSet, *p, *(p + 1)) == NULL) break;
+        nRet += 2;
+      } else {
+        if (strchr(pCharSet, *p) == NULL) break;
+        nRet++;
+      }
+      p = pNext;
+    }
+    return nRet;
+  }
 
-	static int IsSpace(_In_ _CharType ch) throw()
-	{
-		return isspace(ch);
-	}
+  static int strcspn(_In_z_ const _CharType* pStr,
+                     _In_z_ const _CharType* pCharSet) throw() {
+    AMVASSERT(pStr != NULL);
+    int nRet = 0;
+    _CharType* p = const_cast<_CharType*>(pStr);
+    while (*p != 0) {
+      _CharType* pNext = CharNext(p);
+      if (pNext > p + 1) {
+        if (strchr_db(pCharSet, *p, *(p + 1)) != NULL) break;
+        nRet += 2;
+      } else {
+        if (strchr(pCharSet, *p) != NULL) break;
+        nRet++;
+      }
+      p = pNext;
+    }
+    return nRet;
+  }
 
-	static int StringCompare(
-		_In_z_ const _CharType* pstrOne,
-		_In_z_ const _CharType* pstrOther) throw()
-	{
-		return strcmp((LPCSTR) pstrOne, (LPCSTR) pstrOther);
-	}
+  static const char* strpbrk(_In_z_ const char* p,
+                             _In_z_ const char* lpszCharSet) throw() {
+    int nRet = 0;
+    nRet = strcspn(p, lpszCharSet);
+    if (p[nRet]) {
+      p += nRet;
+      return p;
+    }
+    return NULL;
+  }
 
-	static int StringCompareIgnore(
-		_In_z_ const _CharType* pstrOne,
-		_In_z_ const _CharType* pstrOther) throw()
-	{
-		return strcasecmp((LPCSTR) pstrOne, (LPCSTR) pstrOther);
-	}
+  static _CharType* CharNext(_In_ const _CharType* p) throw() {
+    return AmvCharNext(p);
+  }
 
-	static LPCSTR StringFindString(
-		_In_z_ LPCSTR pstrBlock,
-		_In_z_ LPCSTR pstrMatch) throw()
-	{
-		return strstr(pstrBlock, pstrMatch);
-	}
+  static int IsDigit(_In_ _CharType ch) throw() { return isdigit(ch); }
 
-	static LPSTR StringFindString(
-		_In_z_ LPSTR pszBlock,
-		_In_z_ LPCSTR pszMatch) throw()
-	{
-		return( const_cast< LPSTR >( StringFindString( const_cast< LPCSTR >( pszBlock ), pszMatch ) ) );
-	}
+  static int IsSpace(_In_ _CharType ch) throw() { return isspace(ch); }
 
-	static LPCSTR StringFindChar(
-		_In_z_ LPCSTR pszBlock,
-		_In_ char chMatch) throw()
-	{
-		return strchr(pszBlock, chMatch);
-	}
+  static int StringCompare(_In_z_ const _CharType* pstrOne,
+                           _In_z_ const _CharType* pstrOther) throw() {
+    return strcmp((const char*)pstrOne, (const char*)pstrOther);
+  }
 
-	static LPCSTR StringFindCharRev(
-		_In_z_ LPCSTR psz,
-		_In_ char ch) throw()
-	{
-		return strrchr(psz, ch);
-	}
+  static int StringCompareIgnore(_In_z_ const _CharType* pstrOne,
+                                 _In_z_ const _CharType* pstrOther) throw() {
+    return strcasecmp((const char*)pstrOne, (const char*)pstrOther);
+  }
 
-	static LPCSTR StringScanSet(
-		_In_z_ LPCSTR pszBlock,
-		_In_z_ LPCSTR pszMatch) throw()
-	{
-		return strpbrk(pszBlock, pszMatch);
-	}
+  static const char* StringFindString(_In_z_ const char* pstrBlock,
+                                      _In_z_ const char* pstrMatch) throw() {
+    return strstr(pstrBlock, pstrMatch);
+  }
 
-	static int StringSpanIncluding(
-		_In_z_ const _CharType* pstrBlock,
-		_In_z_ const _CharType* pstrSet) throw()
-	{
-		return strspn(pstrBlock, pstrSet);
-	}
+  static LPSTR StringFindString(_In_z_ LPSTR pszBlock,
+                                _In_z_ const char* pszMatch) throw() {
+    return (const_cast<LPSTR>(
+        StringFindString(const_cast<const char*>(pszBlock), pszMatch)));
+  }
 
-	static int StringSpanExcluding(
-		_In_z_ const _CharType* pstrBlock,
-		_In_z_ const _CharType* pstrSet) throw()
-	{
-		return strcspn(pstrBlock, pstrSet);
-	}
+  static const char* StringFindChar(_In_z_ const char* pszBlock,
+                                    _In_ char chMatch) throw() {
+    return strchr(pszBlock, chMatch);
+  }
 
-	_ATL_INSECURE_DEPRECATE("ChTraitsOS::StringUppercase must be passed a buffer size")
-	static _CharType* StringUppercase(_Inout_z_ _CharType* psz) throw()
-	{
-		return CharUpperA( psz );
-	}
+  static const char* StringFindCharRev(_In_z_ const char* psz,
+                                       _In_ char ch) throw() {
+    return strrchr(psz, ch);
+  }
 
-	_ATL_INSECURE_DEPRECATE("ChTraitsOS::StringLowercase must be passed a buffer size")
-	static _CharType* StringLowercase(_Inout_z_ _CharType* psz) throw()
-	{
-		return CharLowerA( psz );
-	}
+  static const char* StringScanSet(_In_z_ const char* pszBlock,
+                                   _In_z_ const char* pszMatch) throw() {
+    return strpbrk(pszBlock, pszMatch);
+  }
 
-	static _CharType* StringUppercase(
-		_Inout_updates_z_(size) _CharType* psz,
-		_In_ size_t size) throw()
-	{
-		if(size>UINT_MAX)
-		{
-			// API only allows DWORD size
-			AtlThrow("Invalid arguments");
-		}
-		DWORD dwSize=static_cast<DWORD>(size);
-		CharUpperBuffA( psz, dwSize );
-		return psz;
-	}
+  static int StringSpanIncluding(_In_z_ const _CharType* pstrBlock,
+                                 _In_z_ const _CharType* pstrSet) throw() {
+    return strspn(pstrBlock, pstrSet);
+  }
 
-	static _CharType* StringLowercase(
-		_Inout_updates_z_(size) _CharType* psz,
-		_In_ size_t size) throw()
-	{
-		if(size>UINT_MAX)
-		{
-			// API only allows DWORD size
-			AtlThrow("Invalid arguments");
-		}
-		DWORD dwSize=static_cast<DWORD>(size);
-		CharLowerBuffA( psz, dwSize );
-		return psz;
-	}
+  static int StringSpanExcluding(_In_z_ const _CharType* pstrBlock,
+                                 _In_z_ const _CharType* pstrSet) throw() {
+    return strcspn(pstrBlock, pstrSet);
+  }
 
-	static _CharType* StringReverse(_Inout_z_ _CharType* psz) throw()
-	{
-		return _strrev( psz );
-	}
+  _AMV_INSECURE_DEPRECATE(
+      "ChTraitsOS::StringUppercase must be passed a buffer size")
+  static _CharType* StringUppercase(_Inout_z_ _CharType* psz) throw() {
+    return CharUpperA(psz);
+  }
 
-	static int GetBaseTypeLength(_In_z_ const char* pszSrc) throw()
-	{
-		// Returns required buffer length in XCHARs
+  _AMV_INSECURE_DEPRECATE(
+      "ChTraitsOS::StringLowercase must be passed a buffer size")
+  static _CharType* StringLowercase(_Inout_z_ _CharType* psz) throw() {
+    return CharLowerA(psz);
+  }
+
+  static _CharType* StringUppercase(_Inout_updates_z_(size) _CharType* psz,
+                                    _In_ size_t size) throw() {
+    if (size > UINT_MAX) {
+      // API only allows DWORD size
+      AmvThrow("Invalid arguments");
+    }
+    DWORD dwSize = static_cast<DWORD>(size);
+    CharUpperBuffA(psz, dwSize);
+    return psz;
+  }
+
+  static _CharType* StringLowercase(_Inout_updates_z_(size) _CharType* psz,
+                                    _In_ size_t size) throw() {
+    if (size > UINT_MAX) {
+      // API only allows DWORD size
+      AmvThrow("Invalid arguments");
+    }
+    DWORD dwSize = static_cast<DWORD>(size);
+    CharLowerBuffA(psz, dwSize);
+    return psz;
+  }
+
+  static _CharType* StringReverse(_Inout_z_ _CharType* psz) throw() {
+    return _strrev(psz);
+  }
+
+  static int GetBaseTypeLength(_In_z_ const char* pszSrc) throw() {
+    // Returns required buffer length in XCHARs
     if (pszSrc == NULL) return 0;
     return static_cast<int>(::strlen(pszSrc));
-	}
+  }
 
-	static int GetBaseTypeLength(
-		_In_z_ const char* pszSrc,
-		_In_ int nLength) throw()
-	{
-		(void)pszSrc;
-		// Returns required buffer length in XCHARs
-		return nLength;
-	}
+  static int GetBaseTypeLength(_In_z_ const char* pszSrc,
+                               _In_ int nLength) throw() {
+    (void)pszSrc;
+    // Returns required buffer length in XCHARs
+    return nLength;
+  }
 
-	static void ConvertToBaseType(
-		_Out_writes_(nDestLength) _CharType* pszDest,
-		_In_ int nDestLength,
-		_In_reads_(nSrcLength) const char* pszSrc,
-		_In_ int nSrcLength = -1) throw()
-	{
-		if (nSrcLength == -1) { nSrcLength=1 + GetBaseTypeLength(pszSrc); }
-		// nLen is in chars
-		memcpy(pszDest, pszSrc, nSrcLength*sizeof(_CharType));
-	}
+  static void ConvertToBaseType(_Out_writes_(nDestLength) _CharType* pszDest,
+                                _In_ int nDestLength,
+                                _In_reads_(nSrcLength) const char* pszSrc,
+                                _In_ int nSrcLength = -1) throw() {
+    if (nSrcLength == -1) {
+      nSrcLength = 1 + GetBaseTypeLength(pszSrc);
+    }
+    // nLen is in chars
+    memcpy(pszDest, pszSrc, nSrcLength * sizeof(_CharType));
+  }
 
-	static int SafeStringLen(_In_opt_z_ const char* psz) throw()
-	{
-		// returns length in bytes
-		return (psz != NULL) ? static_cast<int>(strlen(psz)) : 0;
-	}
-
+  static int SafeStringLen(_In_opt_z_ const char* psz) throw() {
+    // returns length in bytes
+    return (psz != NULL) ? static_cast<int>(strlen(psz)) : 0;
+  }
 };
 
 template <class ChTraits>
-inline typename ChTraits::PCXSTR strstrT(
-	_In_ typename ChTraits::PCXSTR pStr,
-	_In_ typename ChTraits::PCXSTR pCharSet)
-{
-	ATLASSERT(pStr != NULL);
-	size_t nCharSetLen = ChTraits::GetBaseTypeLength(pCharSet);
-	if (nCharSetLen == 0)
-		return pStr;
-	//strlen returns length in bytes, not chars.
-	size_t nStrLen = ChTraits::GetBaseTypeLength(pStr);
-	typename ChTraits::PCXSTR pStrEnd=pStr + nStrLen;
-	const typename ChTraits::XCHAR* pMatch;
-	const typename ChTraits::XCHAR* pStart = pStr;
-	while ((pMatch = ChTraits::strchr(pStart, *pCharSet)) != NULL)
-	{
-		size_t nCharsLeftInStr=pStrEnd - pMatch;
-		if (nCharsLeftInStr < nCharSetLen)
-		{
-			break;
-		}
-		if (memcmp(pMatch, pCharSet, nCharSetLen*sizeof(typename ChTraits::XCHAR)) == 0)
-		{
-			return pMatch;
-		}
-		pStart = ChTraits::CharNext(pMatch);
-	}
+inline const char* strstrT(_In_ const char* pStr, _In_ const char* pCharSet) {
+  log1;
+  AMVASSERT(pStr != NULL);
+  size_t nCharSetLen = ChTraits::GetBaseTypeLength(pCharSet);
+  if (nCharSetLen == 0) return pStr;
 
-	return NULL;
+  // strlen returns length in bytes, not chars.
+  size_t nStrLen = ChTraits::GetBaseTypeLength(pStr);
+  const char* pStrEnd = pStr + nStrLen;
+  const char* pMatch;
+  const char* pStart = pStr;
+  while ((pMatch = ChTraits::strchr(pStart, *pCharSet)) != NULL) {
+    size_t nCharsLeftInStr = pStrEnd - pMatch;
+    if (nCharsLeftInStr < nCharSetLen) {
+      break;
+    }
+    if (memcmp(pMatch, pCharSet, nCharSetLen * sizeof(char)) == 0) {
+      return pMatch;
+    }
+    pStart = ChTraits::CharNext(pMatch);
+  }
+
+  return NULL;
 }
 
-template< typename _BaseType = char, class StringIterator = ChTraitsOS< _BaseType > >
-class StrTraitATL :	public StringIterator
-{
-public:
-	static IAtlStringMgr* GetDefaultManager() throw()
-	{
-		return CAtlStringMgr::GetInstance();
-	}
+template <typename _BaseType = char,
+          class StringIterator = ChTraitsOS<_BaseType> >
+class StrTraitAMV : public StringIterator {
+ public:
+  static IAmvStringMgr* GetDefaultManager() throw() {
+    return CAmvStringMgr::GetInstance();
+  }
 };
 
-typedef BStringT< char, StrTraitATL< char > > CAtlString;
+typedef BStringT<char, StrTraitAMV<char> > CAmvString;
 
+}  // namespace AMV
+typedef AMV::CAmvString BString;
 
-}
-typedef awesome_ATL::CAtlString BString;
+#endif  // AMVSTR_H_

@@ -19,3 +19,6 @@ target_compile_features(Awesome_mix_vol_1_test PRIVATE cxx_std_11)
 target_link_libraries(Awesome_mix_vol_1_test PRIVATE gtest gmock gtest_main)
 
 target_include_directories(Awesome_mix_vol_1_test PRIVATE ${CMAKE_SOURCE_DIR})
+
+# 컴파일 옵션 지정
+target_compile_options(Awesome_mix_vol_1_test PRIVATE -Wall -Werror)

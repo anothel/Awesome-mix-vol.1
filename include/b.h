@@ -1,3 +1,8 @@
+// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+
+#ifndef B_H_
+#define B_H_
+
 #include "include/a.h"
 
 template <typename U>
@@ -7,11 +12,10 @@ class BBB : public AAA<U> {
   ~BBB() { std::cout << "~BBB" << std::endl; }
 
  protected:
-  void Print() {
-    std::cout << "BBBBBBBBBB" << std::endl;
-    std::cout << "b_: " << b_ << std::endl;
-  }
+  void Print() { std::cout << __FILE__ << "(" << __LINE__ << ")" << std::endl; }
 
  private:
   U b_;
 };
+
+#endif  // B_H_
