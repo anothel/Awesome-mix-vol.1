@@ -10,7 +10,7 @@
 #include "include/b.h"
 
 // TEST(Inheriting_from_a_template, test1) { AAA<int> aaa(1); }
-
+ 
 // TEST(Inheriting_from_a_template, test2) { BBB<int> bbb(2); }
 
 char szDest[100];
