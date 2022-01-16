@@ -26,7 +26,7 @@ TEST(BStringT, construct) {
 
   std::string sTest("This is test | This is test | AA");
   BString bstring2(sTest.c_str());
-
+ 
   // unsigned char uszTest[] = {0x00, 0x01, 0x02, 0x02};
   // BString bstring3(uszTest, sizeof(uszTest));
 }
