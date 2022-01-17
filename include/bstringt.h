@@ -17,50 +17,46 @@ class BStringT : public CSimpleStringT<BaseType> {
 
  public:
   BStringT() throw() : CThisSimpleString(StringTraits::GetDefaultManager()) {
-    log1;
+    
   }
 
-  // explicit BStringT(_In_ IAmvStringMgr* pStringMgr) throw()
-  //     : CThisSimpleString(pStringMgr) {}
-
-  // // Copy constructor
-  // explicit BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc) {}
-
-  // Construct from CSimpleStringT
-  operator CSimpleStringT<BaseType>&() {
-    log1;
-    return *(CSimpleStringT<BaseType>*)this;
+  // Copy constructor
+  explicit BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc) {
+    
   }
 
-  // explicit BStringT(_In_ const CSimpleStringT<BaseType>& strSrc)
-  //     : CThisSimpleString(strSrc) {}
+  // // Construct from CSimpleStringT
+  // operator CSimpleStringT<BaseType>&() {
+  //   
+  //   return *(CSimpleStringT<BaseType>*)this;
+  // }
+
+  explicit BStringT(_In_ const CSimpleStringT<BaseType>& strSrc)
+      : CThisSimpleString(strSrc) {
+    
+  }
 
   explicit BStringT(_In_opt_z_ const char* pszSrc)
       : CThisSimpleString(StringTraits::GetDefaultManager()) {
-        log1;
+    
+    *this = pszSrc;
+    
+  }
+
+  BStringT(_In_opt_z_ const char* pszSrc, _In_ IAmvStringMgr* pStringMgr)
+      : CThisSimpleString(pStringMgr) {
     *this = pszSrc;
   }
 
-  // BStringT(_In_opt_z_ const char* pszSrc, _In_ IAmvStringMgr* pStringMgr)
-  //     : CThisSimpleString(pStringMgr) {
-  //   *this = pszSrc;
-  // }
-
-  // BStringT(_In_opt_z_ const unsigned char* pszSrc,
-  //          _In_ IAmvStringMgr* pStringMgr)
-  //     : CThisSimpleString(pStringMgr) {
-  //   *this = reinterpret_cast<const char*>(pszSrc);
-  // }
-
- public:
-  BStringT(_In_reads_(nLength) const unsigned char* pch, _In_ int nLength)
-      : CThisSimpleString(pch, nLength, StringTraits::GetDefaultManager()) {
-        log1;
-      }
-
-  // BStringT(_In_reads_(nLength) const char* pch, _In_ int nLength,
-  //          _In_ IAmvStringMgr* pStringMgr)
-  //     : CThisSimpleString(pch, nLength, pStringMgr) {}
+  BStringT(_In_opt_z_ const unsigned char* pszSrc,
+           _In_ IAmvStringMgr* pStringMgr)
+      : CThisSimpleString(pStringMgr) {
+    *this = reinterpret_cast<const char*>(pszSrc);
+  }
+  BStringT(_In_reads_(nLength) const unsigned char* puch, _In_ int nLength)
+      : CThisSimpleString(puch, nLength, StringTraits::GetDefaultManager()) {
+    
+  }
 
   // Destructor
   ~BStringT() throw() {}
@@ -342,42 +338,6 @@ class BStringT : public CSimpleStringT<BaseType> {
     this->ReleaseBufferSetLength(nLength - nCount);
 
     return (nCount);
-  }
-
-  BStringT Tokenize(_In_z_ const char* pszTokens,
-                    _In_ const int& iStart) const {
-    AMVASSERT(iStart >= 0);
-
-    if (iStart < 0) AmvThrow("Invalid arguments");
-
-    if ((pszTokens == NULL) || (*pszTokens == static_cast<char>(0))) {
-      if (iStart < this->GetLength()) {
-        return (BStringT(this->GetString() + iStart, GetManager()));
-      }
-    } else {
-      const char* pszPlace = this->GetString() + iStart;
-      const char* pszEnd = this->GetString() + this->GetLength();
-      if (pszPlace < pszEnd) {
-        int nIncluding = StringTraits::StringSpanIncluding(pszPlace, pszTokens);
-
-        if ((pszPlace + nIncluding) < pszEnd) {
-          pszPlace += nIncluding;
-          int nExcluding =
-              StringTraits::StringSpanExcluding(pszPlace, pszTokens);
-
-          int iFrom = iStart + nIncluding;
-          int nUntil = nExcluding;
-          // iStart = iFrom + nUntil + 1;
-
-          return (Mid(iFrom, nUntil));
-        }
-      }
-    }
-
-    // // return empty string, done tokenizing
-    // iStart = -1;
-
-    return (BStringT(GetManager()));
   }
 
   // find routines
