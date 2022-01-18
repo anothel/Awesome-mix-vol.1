@@ -72,8 +72,24 @@ TEST(BStringT, func) {
 
     ASSERT_NE(bstring.ReverseFind(static_cast<char>(45)), -1);
 
-    // bstring.TrimLeft();
-    // bstring.Trim();
+    BString bstring_1 = bstring + "    a     ";
+    bstring_1.TrimRight();
+    ASSERT_EQ(bstring_1.GetAt(bstring_1.GetLength() - 1), 'a');
+
+    bstring_1 = "         a";
+    bstring_1.TrimLeft();
+    ASSERT_EQ(bstring_1.GetAt(0), 'a');
+
+    bstring_1 = "         a         ";
+    bstring_1.Trim();
+    ASSERT_EQ(bstring_1.GetAt(0), 'a');
+
+    bstring_1 = " ab    c    a  c    abc";
+    bstring_1.Trim('c');
+    ASSERT_EQ(bstring_1, " ab    c    a  c    ab");
+    bstring_1.Trim(" ba");
+    ASSERT_EQ(bstring_1, "c    a  c");
+
     // bstring.Mid();
     // bstring.Right();
     // bstring.Left();
