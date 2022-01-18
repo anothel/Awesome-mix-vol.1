@@ -353,14 +353,14 @@ class CSimpleStringT {
   void FreeExtra() {
     BStringData* pOldData = GetData();
     int nLength = pOldData->nDataLength;
-    IAmvStringMgr* pStringMgr = pOldData->pStringMgr;
     if (pOldData->nAllocLength == nLength) {
       return;
     }
 
     // Don't reallocate a locked buffer that's shrinking
     if (!pOldData->IsLocked()) {
-      BStringData* pNewData = pStringMgr->Allocate(nLength, sizeof(char));
+      BStringData* pNewData =
+          pOldData->pStringMgr->Allocate(nLength, sizeof(char));
       if (pNewData == NULL) {
         SetLength(nLength);
         return;
