@@ -241,20 +241,21 @@ class CSimpleStringT {
     return (m_pszData[iChar]);
   }
 
-  operator char*() const throw() {
+  // Todo(jpk, 20220118): 아직도 이 부분 왜 다른지 전혀 모르겠음
+  // operator char*() const throw() {
     
-    return (m_pszData);
-  }
+  //   return (m_pszData);
+  // }
 
   operator const char*() const throw() {
     
     return const_cast<const char *>(m_pszData);
   }
 
-  operator const void*() const throw() {
+  // operator const void*() const throw() {
     
-    return reinterpret_cast<const void *>(m_pszData);
-  }
+  //   return reinterpret_cast<const void *>(m_pszData);
+  // }
 
   void Append(_In_z_ const char* pszSrc) {
     Append(pszSrc, StringLength(pszSrc));

@@ -28,6 +28,9 @@ TEST(BStringT, construct) {
   BString bstring2(sTest.c_str());
   bstring1 = bstring2;
 
+  // std::cout << bstring1 << std::endl;
+  // printf("[jpk] bstring1: %s \n", bstring1.GetBuffer());
+
   unsigned char uszTest[] = {0x00, 0x01, 0x02, 0x02};
   BString bstring3(uszTest, sizeof(uszTest));
 }
