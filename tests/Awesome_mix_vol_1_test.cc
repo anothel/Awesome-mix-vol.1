@@ -101,13 +101,6 @@ TEST(BStringT, func) {
     ASSERT_EQ(bstring_1, " b c e d");
     bstring_1.Trim(" bd");
     ASSERT_EQ(bstring_1, "c e");
-
-    // bstring.Mid();
-    // bstring.Right();
-    // bstring.Left();
-
-    // bstring.SpanIncluding();
-    // bstring.SpanExcluding();
   } catch (...) {
   }
 }
@@ -136,10 +129,18 @@ TEST(_Func_UnitTest, CSimpleStringT) {
     bstring.Empty();
     ASSERT_EQ(bstring.GetLength(), 0);
 
-    // bstring.FreeExtra();
-    // bstring.GetAllocLength();
-    // bstring.GetAt();
-    // bstring.GetBuffer();
+    bstring = "01234567";
+    int before =  bstring.GetAllocLength();
+    bstring = "A";
+    bstring.FreeExtra();
+    ASSERT_TRUE(bstring.GetAllocLength() < before );
+        
+    ASSERT_EQ(bstring.GetAllocLength(), 7);
+
+    ASSERT_EQ(bstring.GetAt(0), 'A');
+
+    ASSERT_EQ(memcmp(bstring.GetBuffer(), "A", strlen("A")), S_OK);
+
     // bstring.GetBufferSetLength();
     // bstring.GetLength();
     // bstring.GetString();
