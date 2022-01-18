@@ -19,7 +19,7 @@ inline _CharType* AmvCharNext(_In_ const _CharType* p) throw() {
 template <typename CharType>
 inline const CharType* AmvstrchrT(_In_z_ const CharType* p,
                                   _In_ CharType ch) throw() {
-  ATLASSERT(p != NULL);
+  AMVASSERT(p != NULL);
   if (p == NULL) {
     return NULL;
   }
@@ -27,7 +27,7 @@ inline const CharType* AmvstrchrT(_In_z_ const CharType* p,
     if (*p == ch) {
       return p;
     }
-    p = AtlCharNext(p);
+    p = AmvCharNext(p);
   }
   // strchr for '\0' should succeed - the while loop terminates
   //*p == 0, but ch also == 0, so NULL terminator address is returned
