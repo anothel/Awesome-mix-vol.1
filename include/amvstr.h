@@ -143,6 +143,19 @@ class ChTraitsOS {
     return AmvstrchrT(p, ch);
   }
 
+  _Ret_maybenull_z_ static const char* strchr_db(_In_z_ const char* p,
+                                                 _In_ char ch1,
+                                                 _In_ char ch2) throw() {
+    AMVASSERT(p != NULL);
+    while (*p != 0) {
+      if (*p == ch1 && *(p + 1) == ch2) {
+        return p;
+      }
+      p = CharNext(p);
+    }
+    return NULL;
+  }
+
   static int strspn(_In_z_ const _CharType* pStr,
                     _In_z_ const _CharType* pCharSet) throw() {
     AMVASSERT(pStr != NULL);
@@ -246,43 +259,6 @@ class ChTraitsOS {
     return strcspn(pstrBlock, pstrSet);
   }
 
-  _AMV_INSECURE_DEPRECATE(
-      "ChTraitsOS::StringUppercase must be passed a buffer size")
-  static _CharType* StringUppercase(_Inout_z_ _CharType* psz) throw() {
-    return CharUpperA(psz);
-  }
-
-  _AMV_INSECURE_DEPRECATE(
-      "ChTraitsOS::StringLowercase must be passed a buffer size")
-  static _CharType* StringLowercase(_Inout_z_ _CharType* psz) throw() {
-    return CharLowerA(psz);
-  }
-
-  static _CharType* StringUppercase(_Inout_updates_z_(size) _CharType* psz,
-                                    _In_ size_t size) throw() {
-    if (size > UINT_MAX) {
-      // API only allows DWORD size
-      AmvThrow("Invalid arguments");
-    }
-    DWORD dwSize = static_cast<DWORD>(size);
-    CharUpperBuffA(psz, dwSize);
-    return psz;
-  }
-
-  static _CharType* StringLowercase(_Inout_updates_z_(size) _CharType* psz,
-                                    _In_ size_t size) throw() {
-    if (size > UINT_MAX) {
-      // API only allows DWORD size
-      AmvThrow("Invalid arguments");
-    }
-    DWORD dwSize = static_cast<DWORD>(size);
-    CharLowerBuffA(psz, dwSize);
-    return psz;
-  }
-
-  static _CharType* StringReverse(_Inout_z_ _CharType* psz) throw() {
-    return _strrev(psz);
-  }
 
   static int GetBaseTypeLength(_In_z_ const char* pszSrc) throw() {
     // Returns required buffer length in XCHARs
