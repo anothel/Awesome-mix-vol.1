@@ -549,7 +549,8 @@ class CSimpleStringT {
   }
 
  protected:
-  static void __cdecl Concatenate(_Inout_ const CSimpleStringT& strResult,
+ // Todo(jpk, 20200118): strResult는 const가 붙으면 안됨? 뭘 수정하는 게 있나?
+  static void __cdecl Concatenate(_Inout_ CSimpleStringT& strResult,
                                   _In_reads_(nLength1) const char* psz1,
                                   _In_ int nLength1,
                                   _In_reads_(nLength2) const char* psz2,
