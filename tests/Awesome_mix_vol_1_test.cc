@@ -72,27 +72,40 @@ TEST(BStringT, func) {
 
     ASSERT_NE(bstring.ReverseFind(static_cast<char>(45)), -1);
 
-    BString bstring_1 = bstring + "    a     ";
+    BString bstring_1 = bstring + "    a  b  b  c  d     ";
     bstring_1.TrimRight();
+    ASSERT_EQ(bstring_1.GetAt(bstring_1.GetLength() - 1), 'd');
+
+    bstring_1.TrimRight('d');
+    ASSERT_EQ(bstring_1.GetAt(bstring_1.GetLength() - 1), ' ');
+
+    bstring_1.TrimRight(" cb");
     ASSERT_EQ(bstring_1.GetAt(bstring_1.GetLength() - 1), 'a');
 
-    bstring_1 = "         a";
+    bstring_1 = "         a b c d  e";
     bstring_1.TrimLeft();
     ASSERT_EQ(bstring_1.GetAt(0), 'a');
 
-    bstring_1 = "         a         ";
+    bstring_1.TrimLeft('a');
+    ASSERT_EQ(bstring_1.GetAt(0), ' ');
+
+    bstring_1.TrimLeft(" b");
+    ASSERT_EQ(bstring_1.GetAt(0), 'c');
+
+    bstring_1 = "    a b c e d    ";
     bstring_1.Trim();
     ASSERT_EQ(bstring_1.GetAt(0), 'a');
+    ASSERT_EQ(bstring_1.GetAt(bstring_1.GetLength() - 1), 'd');
 
-    bstring_1 = " ab    c    a  c    abc";
-    bstring_1.Trim('c');
-    ASSERT_EQ(bstring_1, " ab    c    a  c    ab");
-    bstring_1.Trim(" ba");
-    ASSERT_EQ(bstring_1, "c    a  c");
+    bstring_1.Trim('a');
+    ASSERT_EQ(bstring_1, " b c e d");
+    bstring_1.Trim(" bd");
+    ASSERT_EQ(bstring_1, "c e");
 
     // bstring.Mid();
     // bstring.Right();
     // bstring.Left();
+
     // bstring.SpanIncluding();
     // bstring.SpanExcluding();
   } catch (...) {
