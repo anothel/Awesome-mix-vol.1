@@ -241,20 +241,21 @@ class CSimpleStringT {
     return (m_pszData[iChar]);
   }
 
-  operator char*() const throw() {
+  // Todo(jpk, 20220118): 아직도 이 부분 왜 다른지 전혀 모르겠음
+  // operator char*() const throw() {
     
-    return (m_pszData);
-  }
+  //   return (m_pszData);
+  // }
 
   operator const char*() const throw() {
     
     return const_cast<const char *>(m_pszData);
   }
 
-  operator const void*() const throw() {
+  // operator const void*() const throw() {
     
-    return reinterpret_cast<const void *>(m_pszData);
-  }
+  //   return reinterpret_cast<const void *>(m_pszData);
+  // }
 
   void Append(_In_z_ const char* pszSrc) {
     Append(pszSrc, StringLength(pszSrc));
@@ -548,7 +549,8 @@ class CSimpleStringT {
   }
 
  protected:
-  static void __cdecl Concatenate(_Inout_ const CSimpleStringT& strResult,
+ // Todo(jpk, 20200118): strResult는 const가 붙으면 안됨? 뭘 수정하는 게 있나?
+  static void __cdecl Concatenate(_Inout_ CSimpleStringT& strResult,
                                   _In_reads_(nLength1) const char* psz1,
                                   _In_ int nLength1,
                                   _In_reads_(nLength2) const char* psz2,

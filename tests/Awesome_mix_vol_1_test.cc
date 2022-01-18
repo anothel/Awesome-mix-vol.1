@@ -28,6 +28,9 @@ TEST(BStringT, construct) {
   BString bstring2(sTest.c_str());
   bstring1 = bstring2;
 
+  // std::cout << bstring1 << std::endl;
+  // printf("[jpk] bstring1: %s \n", bstring1.GetBuffer());
+
   unsigned char uszTest[] = {0x00, 0x01, 0x02, 0x02};
   BString bstring3(uszTest, sizeof(uszTest));
 }
@@ -60,21 +63,33 @@ TEST(BStringT, func) {
     bstring.Remove(static_cast<char>(95));
     ASSERT_EQ(std::string(bstring), std::string(sTest));
 
-    printf("[jpk] %s \n", bstring.GetBuffer());
+    bstring += static_cast<char>(45);
+    ASSERT_NE(bstring.Find(static_cast<char>(45), 0), -1);
 
+    ASSERT_NE(bstring.Find("This", 0), -1);
 
- 
-    // bstring.Find(static_cast<char>(0), 0);
-    // bstring.Find("This", 0);
+    ASSERT_NE(bstring.FindOneOf("is"), -1);
 
-    // bstring.FindOneOf();
-    // bstring.ReverseFind();
-    // bstring.MakeUpper();
-    // bstring.MakeLower();
-    // bstring.MakeReverse();
-    // bstring.TrimRight();
-    // bstring.TrimLeft();
-    // bstring.Trim();
+    ASSERT_NE(bstring.ReverseFind(static_cast<char>(45)), -1);
+
+    BString bstring_1 = bstring + "    a     ";
+    bstring_1.TrimRight();
+    ASSERT_EQ(bstring_1.GetAt(bstring_1.GetLength() - 1), 'a');
+
+    bstring_1 = "         a";
+    bstring_1.TrimLeft();
+    ASSERT_EQ(bstring_1.GetAt(0), 'a');
+
+    bstring_1 = "         a         ";
+    bstring_1.Trim();
+    ASSERT_EQ(bstring_1.GetAt(0), 'a');
+
+    bstring_1 = " ab    c    a  c    abc";
+    bstring_1.Trim('c');
+    ASSERT_EQ(bstring_1, " ab    c    a  c    ab");
+    bstring_1.Trim(" ba");
+    ASSERT_EQ(bstring_1, "c    a  c");
+
     // bstring.Mid();
     // bstring.Right();
     // bstring.Left();

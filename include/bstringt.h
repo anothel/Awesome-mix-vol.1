@@ -16,31 +16,29 @@ class BStringT : public CSimpleStringT<BaseType> {
   typedef StringTraits StrTraits;
 
  public:
-  BStringT() throw() : CThisSimpleString(StringTraits::GetDefaultManager()) {
-    
-  }
+  BStringT() throw() : CThisSimpleString(StringTraits::GetDefaultManager()) {}
+
+  explicit BStringT(_In_ IAmvStringMgr* pStringMgr) throw()
+      : CThisSimpleString(pStringMgr) {}
 
   // Copy constructor
-  explicit BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc) {
-    
-  }
+  // explicit BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc) {}
+  /* Todo(jpk, 20220118): 파라미터가 한개이기 때문에 explicit를 걸어서 암시적
+   * 형변환을 막아야 한다면 이 상황에서는 처치할 수가 없음 */
+  BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc) {}
 
   // // Construct from CSimpleStringT
   // operator CSimpleStringT<BaseType>&() {
-  //   
+  //
   //   return *(CSimpleStringT<BaseType>*)this;
   // }
 
   explicit BStringT(_In_ const CSimpleStringT<BaseType>& strSrc)
-      : CThisSimpleString(strSrc) {
-    
-  }
+      : CThisSimpleString(strSrc) {}
 
   explicit BStringT(_In_opt_z_ const char* pszSrc)
       : CThisSimpleString(StringTraits::GetDefaultManager()) {
-    
     *this = pszSrc;
-    
   }
 
   BStringT(_In_opt_z_ const char* pszSrc, _In_ IAmvStringMgr* pStringMgr)
@@ -54,9 +52,7 @@ class BStringT : public CSimpleStringT<BaseType> {
     *this = reinterpret_cast<const char*>(pszSrc);
   }
   BStringT(_In_reads_(nLength) const unsigned char* puch, _In_ int nLength)
-      : CThisSimpleString(puch, nLength, StringTraits::GetDefaultManager()) {
-    
-  }
+      : CThisSimpleString(puch, nLength, StringTraits::GetDefaultManager()) {}
 
   // Destructor
   ~BStringT() throw() {}
@@ -403,38 +399,6 @@ class BStringT : public CSimpleStringT<BaseType> {
     return ((psz == NULL) ? -1 : static_cast<int>(psz - this->GetString()));
   }
 
-  // manipulation
-
-  // Convert the string to uppercase
-  BStringT& MakeUpper() {
-    int nLength = this->GetLength();
-    char* pszBuffer = this->GetBuffer(nLength);
-    StringTraits::StringUppercase(pszBuffer, nLength + 1);
-    this->ReleaseBufferSetLength(nLength);
-
-    return (*this);
-  }
-
-  // Convert the string to lowercase
-  BStringT& MakeLower() {
-    int nLength = this->GetLength();
-    char* pszBuffer = this->GetBuffer(nLength);
-    StringTraits::StringLowercase(pszBuffer, nLength + 1);
-    this->ReleaseBufferSetLength(nLength);
-
-    return (*this);
-  }
-
-  // Reverse the string
-  BStringT& MakeReverse() {
-    int nLength = this->GetLength();
-    char* pszBuffer = this->GetBuffer(nLength);
-    StringTraits::StringReverse(pszBuffer);
-    this->ReleaseBufferSetLength(nLength);
-
-    return (*this);
-  }
-
   // trimming
 
   // Remove all trailing whitespace
@@ -526,7 +490,6 @@ class BStringT : public CSimpleStringT<BaseType> {
       int iLast = static_cast<int>(pszLast - this->GetString());
       this->Truncate(iLast);
     }
-
     return (*this);
   }
 
