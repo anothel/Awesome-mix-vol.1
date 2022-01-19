@@ -103,7 +103,7 @@ class CNilStringData : public BStringData {
     pStringMgr = pMgr;
   }
 
- public:
+ private:
   wchar_t achNil[2];
 };
 
@@ -353,14 +353,14 @@ class CSimpleStringT {
   void FreeExtra() {
     BStringData* pOldData = GetData();
     int nLength = pOldData->nDataLength;
-    IAmvStringMgr* pStringMgr = pOldData->pStringMgr;
     if (pOldData->nAllocLength == nLength) {
       return;
     }
 
     // Don't reallocate a locked buffer that's shrinking
     if (!pOldData->IsLocked()) {
-      BStringData* pNewData = pStringMgr->Allocate(nLength, sizeof(char));
+      BStringData* pNewData =
+          pOldData->pStringMgr->Allocate(nLength, sizeof(char));
       if (pNewData == NULL) {
         SetLength(nLength);
         return;
@@ -399,13 +399,13 @@ class CSimpleStringT {
   }
 
   char* GetBufferSetLength(_In_ int nLength) {
-    char* pszBuffer = GetBuffer(nLength);
     SetLength(nLength);
 
-    return (pszBuffer);
+    return (GetBuffer(nLength));
   }
 
   int GetLength() const throw() { return (GetData()->nDataLength); }
+
   IAmvStringMgr* GetManager() const throw() {
     IAmvStringMgr* pStringMgr = GetData()->pStringMgr;
     return pStringMgr ? pStringMgr->Clone() : NULL;
@@ -414,6 +414,7 @@ class CSimpleStringT {
   const char* GetString() const throw() { return (m_pszData); }
 
   bool IsEmpty() const throw() { return (GetLength() == 0); }
+
   char* LockBuffer() {
     BStringData* pData = GetData();
     if (pData->IsShared()) {
@@ -426,17 +427,13 @@ class CSimpleStringT {
     return (m_pszData);
   }
 
-  void UnlockBuffer() throw() {
-    BStringData* pData = GetData();
-    pData->Unlock();
-  }
+  void UnlockBuffer() throw() { GetData()->Unlock(); }
 
   void Preallocate(_In_ int nLength) { PrepareWrite(nLength); }
 
   void ReleaseBuffer(_In_ int nNewLength = -1) {
     if (nNewLength == -1) {
-      int nAlloc = GetData()->nAllocLength;
-      nNewLength = StringLengthN(m_pszData, nAlloc);
+      nNewLength = StringLengthN(m_pszData, GetData()->nAllocLength);
     }
     SetLength(nNewLength);
   }
@@ -464,6 +461,7 @@ class CSimpleStringT {
   }
 
   void SetManager(_Inout_ IAmvStringMgr* pStringMgr) {
+log1;
     AMVASSERT(IsEmpty());
 
     BStringData* pData = GetData();

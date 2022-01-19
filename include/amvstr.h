@@ -21,6 +21,7 @@ class CAmvStringMgr : public IAmvStringMgr {
   }
 
   virtual ~CAmvStringMgr() throw() {}
+
   void SetMemoryManager(_In_ IAmvMemMgr* pMemMgr) throw() {
     AMVASSUME(m_pMemMgr == NULL);
     m_pMemMgr = pMemMgr;
@@ -258,7 +259,6 @@ class ChTraitsOS {
                                  _In_z_ const _CharType* pstrSet) throw() {
     return strcspn(pstrBlock, pstrSet);
   }
-
 
   static int GetBaseTypeLength(_In_z_ const char* pszSrc) throw() {
     // Returns required buffer length in XCHARs

@@ -6,11 +6,12 @@
 #include <iostream>
 #include <string>
 
+// #include "include/amvmem.h"
 #include "include/amvstr.h"
 #include "include/b.h"
 
 // TEST(Inheriting_from_a_template, test1) { AAA<int> aaa(1); }
- 
+
 // TEST(Inheriting_from_a_template, test2) { BBB<int> bbb(2); }
 
 char szDest[100];
@@ -27,9 +28,6 @@ TEST(BStringT, construct) {
   std::string sTest("This is test | This is test | AA");
   BString bstring2(sTest.c_str());
   bstring1 = bstring2;
-
-  // std::cout << bstring1 << std::endl;
-  // printf("[jpk] bstring1: %s \n", bstring1.GetBuffer());
 
   unsigned char uszTest[] = {0x00, 0x01, 0x02, 0x02};
   BString bstring3(uszTest, sizeof(uszTest));
@@ -72,29 +70,35 @@ TEST(BStringT, func) {
 
     ASSERT_NE(bstring.ReverseFind(static_cast<char>(45)), -1);
 
-    BString bstring_1 = bstring + "    a     ";
+    BString bstring_1 = bstring + "    a  b  b  c  d     ";
     bstring_1.TrimRight();
+    ASSERT_EQ(bstring_1.GetAt(bstring_1.GetLength() - 1), 'd');
+
+    bstring_1.TrimRight('d');
+    ASSERT_EQ(bstring_1.GetAt(bstring_1.GetLength() - 1), ' ');
+
+    bstring_1.TrimRight(" cb");
     ASSERT_EQ(bstring_1.GetAt(bstring_1.GetLength() - 1), 'a');
 
-    bstring_1 = "         a";
+    bstring_1 = "         a b c d  e";
     bstring_1.TrimLeft();
     ASSERT_EQ(bstring_1.GetAt(0), 'a');
 
-    bstring_1 = "         a         ";
+    bstring_1.TrimLeft('a');
+    ASSERT_EQ(bstring_1.GetAt(0), ' ');
+
+    bstring_1.TrimLeft(" b");
+    ASSERT_EQ(bstring_1.GetAt(0), 'c');
+
+    bstring_1 = "    a b c e d    ";
     bstring_1.Trim();
     ASSERT_EQ(bstring_1.GetAt(0), 'a');
+    ASSERT_EQ(bstring_1.GetAt(bstring_1.GetLength() - 1), 'd');
 
-    bstring_1 = " ab    c    a  c    abc";
-    bstring_1.Trim('c');
-    ASSERT_EQ(bstring_1, " ab    c    a  c    ab");
-    bstring_1.Trim(" ba");
-    ASSERT_EQ(bstring_1, "c    a  c");
-
-    // bstring.Mid();
-    // bstring.Right();
-    // bstring.Left();
-    // bstring.SpanIncluding();
-    // bstring.SpanExcluding();
+    bstring_1.Trim('a');
+    ASSERT_EQ(bstring_1, " b c e d");
+    bstring_1.Trim(" bd");
+    ASSERT_EQ(bstring_1, "c e");
   } catch (...) {
   }
 }
@@ -119,27 +123,49 @@ TEST(_Func_UnitTest, CSimpleStringT) {
 
     bstring.CopyCharsOverlapped(szDest, szSrc, strlen(szSrc));
     ASSERT_EQ(memcmp(szDest, szSrc, strlen(szSrc)), S_OK);
- 
+
     bstring.Empty();
     ASSERT_EQ(bstring.GetLength(), 0);
 
-    // bstring.FreeExtra();
-    // bstring.GetAllocLength();
-    // bstring.GetAt();
-    // bstring.GetBuffer();
-    // bstring.GetBufferSetLength();
-    // bstring.GetLength();
-    // bstring.GetString();
-    // bstring.IsEmpty();
-    // bstring.UnlockBuffer();
-    // bstring.Preallocate();
-    // bstring.ReleaseBuffer();
-    // bstring.ReleaseBufferSetLength();
-    // bstring.Truncate();
-    // bstring.SetAt();
-    // bstring.SetManager();
-    // bstring.SetString();
-    // bstring.Concatenate();
+    bstring = "01234567";
+    int before = bstring.GetAllocLength();
+    bstring = "A";
+    bstring.FreeExtra();
+    ASSERT_TRUE(bstring.GetAllocLength() < before);
+
+    ASSERT_EQ(bstring.GetAllocLength(), 7);
+
+    ASSERT_EQ(bstring.GetAt(0), 'A');
+
+    ASSERT_EQ(memcmp(bstring.GetBuffer(), "A", strlen("A")), S_OK);
+
+    ASSERT_EQ(memcmp(bstring.GetBufferSetLength(3), "A", strlen("A")), S_OK);
+
+    ASSERT_EQ(bstring.GetLength(), 3);
+
+    ASSERT_EQ(memcmp(bstring.GetString(), "A", strlen("A")), S_OK);
+
+    ASSERT_EQ(bstring.IsEmpty(), false);
+
+    bstring.LockBuffer();
+    bstring.UnlockBuffer();
+
+    bstring.Preallocate(3);
+
+    bstring.ReleaseBuffer();
+
+    bstring.ReleaseBufferSetLength(3);
+
+    bstring.Truncate(2);
+
+    bstring.SetAt(0, 'a');
+    ASSERT_EQ(memcmp(bstring.GetBuffer(), "a", strlen("a")), S_OK);
+
+    // static AMV::CAmvHeap strHeap;
+    // bstring.SetManager(bstring.GetManager());
+
+    bstring.SetString("AAA");
+    ASSERT_EQ(memcmp(bstring.GetBuffer(), "AAA", strlen("AAA")), S_OK);
   } catch (...) {
   }
 }
