@@ -6,11 +6,12 @@
 #include <iostream>
 #include <string>
 
+// #include "include/amvmem.h"
 #include "include/amvstr.h"
 #include "include/b.h"
 
 // TEST(Inheriting_from_a_template, test1) { AAA<int> aaa(1); }
- 
+
 // TEST(Inheriting_from_a_template, test2) { BBB<int> bbb(2); }
 
 char szDest[100];
@@ -27,9 +28,6 @@ TEST(BStringT, construct) {
   std::string sTest("This is test | This is test | AA");
   BString bstring2(sTest.c_str());
   bstring1 = bstring2;
-
-  // std::cout << bstring1 << std::endl;
-  // printf("[jpk] bstring1: %s \n", bstring1.GetBuffer());
 
   unsigned char uszTest[] = {0x00, 0x01, 0x02, 0x02};
   BString bstring3(uszTest, sizeof(uszTest));
@@ -125,16 +123,16 @@ TEST(_Func_UnitTest, CSimpleStringT) {
 
     bstring.CopyCharsOverlapped(szDest, szSrc, strlen(szSrc));
     ASSERT_EQ(memcmp(szDest, szSrc, strlen(szSrc)), S_OK);
- 
+
     bstring.Empty();
     ASSERT_EQ(bstring.GetLength(), 0);
 
     bstring = "01234567";
-    int before =  bstring.GetAllocLength();
+    int before = bstring.GetAllocLength();
     bstring = "A";
     bstring.FreeExtra();
-    ASSERT_TRUE(bstring.GetAllocLength() < before );
-        
+    ASSERT_TRUE(bstring.GetAllocLength() < before);
+
     ASSERT_EQ(bstring.GetAllocLength(), 7);
 
     ASSERT_EQ(bstring.GetAt(0), 'A');
@@ -148,25 +146,26 @@ TEST(_Func_UnitTest, CSimpleStringT) {
     ASSERT_EQ(memcmp(bstring.GetString(), "A", strlen("A")), S_OK);
 
     ASSERT_EQ(bstring.IsEmpty(), false);
-    
-    // bstring = "ABCDEFG";
-    // printf("[jpk] %c \n", bstring.GetAt(1));
 
-    // bstring.LockBuffer();
-    // printf("[jpk] %c \n", bstring.GetAt(1));
-    // bstring = "AAAAAAA";
+    bstring.LockBuffer();
+    bstring.UnlockBuffer();
 
-    // std::cout << bstring << std::endl;
+    bstring.Preallocate(3);
 
-    // bstring.UnlockBuffer();
-    // bstring.Preallocate();
-    // bstring.ReleaseBuffer();
-    // bstring.ReleaseBufferSetLength();
-    // bstring.Truncate();
-    // bstring.SetAt();
-    // bstring.SetManager();
-    // bstring.SetString();
-    // bstring.Concatenate();
+    bstring.ReleaseBuffer();
+
+    bstring.ReleaseBufferSetLength(3);
+
+    bstring.Truncate(2);
+
+    bstring.SetAt(0, 'a');
+    ASSERT_EQ(memcmp(bstring.GetBuffer(), "a", strlen("a")), S_OK);
+
+    // static AMV::CAmvHeap strHeap;
+    // bstring.SetManager(bstring.GetManager());
+
+    bstring.SetString("AAA");
+    ASSERT_EQ(memcmp(bstring.GetBuffer(), "AAA", strlen("AAA")), S_OK);
   } catch (...) {
   }
 }

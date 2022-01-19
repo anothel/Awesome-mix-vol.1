@@ -103,7 +103,7 @@ class CNilStringData : public BStringData {
     pStringMgr = pMgr;
   }
 
- public:
+ private:
   wchar_t achNil[2];
 };
 
@@ -405,6 +405,7 @@ class CSimpleStringT {
   }
 
   int GetLength() const throw() { return (GetData()->nDataLength); }
+
   IAmvStringMgr* GetManager() const throw() {
     IAmvStringMgr* pStringMgr = GetData()->pStringMgr;
     return pStringMgr ? pStringMgr->Clone() : NULL;
@@ -460,6 +461,7 @@ class CSimpleStringT {
   }
 
   void SetManager(_Inout_ IAmvStringMgr* pStringMgr) {
+log1;
     AMVASSERT(IsEmpty());
 
     BStringData* pData = GetData();
