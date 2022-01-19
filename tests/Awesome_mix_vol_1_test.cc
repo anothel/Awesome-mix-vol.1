@@ -141,10 +141,23 @@ TEST(_Func_UnitTest, CSimpleStringT) {
 
     ASSERT_EQ(memcmp(bstring.GetBuffer(), "A", strlen("A")), S_OK);
 
-    // bstring.GetBufferSetLength();
-    // bstring.GetLength();
-    // bstring.GetString();
-    // bstring.IsEmpty();
+    ASSERT_EQ(memcmp(bstring.GetBufferSetLength(3), "A", strlen("A")), S_OK);
+
+    ASSERT_EQ(bstring.GetLength(), 3);
+
+    ASSERT_EQ(memcmp(bstring.GetString(), "A", strlen("A")), S_OK);
+
+    ASSERT_EQ(bstring.IsEmpty(), false);
+    
+    // bstring = "ABCDEFG";
+    // printf("[jpk] %c \n", bstring.GetAt(1));
+
+    // bstring.LockBuffer();
+    // printf("[jpk] %c \n", bstring.GetAt(1));
+    // bstring = "AAAAAAA";
+
+    // std::cout << bstring << std::endl;
+
     // bstring.UnlockBuffer();
     // bstring.Preallocate();
     // bstring.ReleaseBuffer();

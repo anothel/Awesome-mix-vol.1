@@ -399,10 +399,9 @@ class CSimpleStringT {
   }
 
   char* GetBufferSetLength(_In_ int nLength) {
-    char* pszBuffer = GetBuffer(nLength);
     SetLength(nLength);
 
-    return (pszBuffer);
+    return (GetBuffer(nLength));
   }
 
   int GetLength() const throw() { return (GetData()->nDataLength); }
@@ -414,6 +413,7 @@ class CSimpleStringT {
   const char* GetString() const throw() { return (m_pszData); }
 
   bool IsEmpty() const throw() { return (GetLength() == 0); }
+
   char* LockBuffer() {
     BStringData* pData = GetData();
     if (pData->IsShared()) {
@@ -426,17 +426,13 @@ class CSimpleStringT {
     return (m_pszData);
   }
 
-  void UnlockBuffer() throw() {
-    BStringData* pData = GetData();
-    pData->Unlock();
-  }
+  void UnlockBuffer() throw() { GetData()->Unlock(); }
 
   void Preallocate(_In_ int nLength) { PrepareWrite(nLength); }
 
   void ReleaseBuffer(_In_ int nNewLength = -1) {
     if (nNewLength == -1) {
-      int nAlloc = GetData()->nAllocLength;
-      nNewLength = StringLengthN(m_pszData, nAlloc);
+      nNewLength = StringLengthN(m_pszData, GetData()->nAllocLength);
     }
     SetLength(nNewLength);
   }
