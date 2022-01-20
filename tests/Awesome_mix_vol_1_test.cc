@@ -6,13 +6,12 @@
 #include <iostream>
 #include <string>
 
-// #include "include/amvmem.h"
 #include "include/amvstr.h"
 #include "include/b.h"
 
-// TEST(Inheriting_from_a_template, test1) { AAA<int> aaa(1); }
+TEST(Inheriting_from_a_template, test1) { AAA<int> aaa(1); }
 
-// TEST(Inheriting_from_a_template, test2) { BBB<int> bbb(2); }
+TEST(Inheriting_from_a_template, test2) { BBB<int> bbb(2); }
 
 char szDest[100];
 const char* szSrc = "This is source";
@@ -99,6 +98,9 @@ TEST(BStringT, func) {
     ASSERT_EQ(bstring_1, " b c e d");
     bstring_1.Trim(" bd");
     ASSERT_EQ(bstring_1, "c e");
+
+    // // print
+    // bstring_1.Print();
   } catch (...) {
   }
 }
