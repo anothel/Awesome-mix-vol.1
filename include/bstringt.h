@@ -5,7 +5,7 @@
 
 #include "include/amvalloc.h"
 #include "include/amvcore.h"
-#include "include/salieri.h"
+#include "salieri/salieri.h"
 
 namespace AMV {
 
