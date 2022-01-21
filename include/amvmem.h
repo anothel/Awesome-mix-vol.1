@@ -8,7 +8,7 @@
 #include <cstdlib>
 
 #include "include/amvdefine.h"
-#include "salieri/salieri.h"
+#include "include/salieri.h"
 
 namespace AMV {
 
