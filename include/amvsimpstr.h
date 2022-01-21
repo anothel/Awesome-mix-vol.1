@@ -9,7 +9,7 @@
 #include <cstring>
 
 #include "include/amvdefine.h"
-#include "include/salieri.h"
+#include "salieri/salieri.h"
 
 namespace AMV {
 
