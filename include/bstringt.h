@@ -469,7 +469,7 @@ class BStringT : public CSimpleStringT<BaseType> {
     printf("%s\n", this->GetString());
     return;
   }
-
+ 
   // trimming anything (either side)
 
   // Remove all trailing occurrences of character 'chTarget'
