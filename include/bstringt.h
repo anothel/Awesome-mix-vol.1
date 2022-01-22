@@ -465,7 +465,7 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (TrimRight(pszTargets).TrimLeft(pszTargets));
   }
 
-  void Print() {
+  void Print() { 
     printf("%s\n", this->GetString());
     return;
   }
