@@ -465,11 +465,11 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (TrimRight(pszTargets).TrimLeft(pszTargets));
   }
 
-  void Print() { 
+  void Print() {
     printf("%s\n", this->GetString());
     return;
   }
- 
+
   // trimming anything (either side)
 
   // Remove all trailing occurrences of character 'chTarget'
