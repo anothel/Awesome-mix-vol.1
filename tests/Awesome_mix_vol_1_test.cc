@@ -100,6 +100,7 @@ TEST(BStringT, func) {
     ASSERT_EQ(bstring_1, "c e");
 
     bstring_1.Print();
+
   } catch (...) {
   }
 }
