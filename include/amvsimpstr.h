@@ -130,7 +130,6 @@ template <typename BaseType>
 class CSimpleStringT {
  public:
   explicit CSimpleStringT(_Inout_ IAmvStringMgr* pStringMgr) {
-    
     AMVENSURE(pStringMgr != NULL);
     Attach(pStringMgr->GetNilString());
   }
