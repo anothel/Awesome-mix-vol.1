@@ -22,7 +22,8 @@ class BStringT : public CSimpleStringT<BaseType> {
       : CThisSimpleString(pStringMgr) {}
 
   // Copy constructor
-  // explicit BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc) {}
+  // explicit BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc)
+  // {}
   /* Todo(jpk, 20220118): 파라미터가 한개이기 때문에 explicit를 걸어서 암시적
    * 형변환을 막아야 한다면 이 상황에서는 처치할 수가 없음 */
   BStringT(_In_ const BStringT& strSrc) : CThisSimpleString(strSrc) {}
@@ -464,6 +465,11 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (TrimRight(pszTargets).TrimLeft(pszTargets));
   }
 
+  void Print() {
+    printf("%s\n", this->GetString());
+    return;
+  }
+
   // trimming anything (either side)
 
   // Remove all trailing occurrences of character 'chTarget'
@@ -490,6 +496,7 @@ class BStringT : public CSimpleStringT<BaseType> {
       int iLast = static_cast<int>(pszLast - this->GetString());
       this->Truncate(iLast);
     }
+
     return (*this);
   }
 

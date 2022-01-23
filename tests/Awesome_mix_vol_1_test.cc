@@ -99,8 +99,7 @@ TEST(BStringT, func) {
     bstring_1.Trim(" bd");
     ASSERT_EQ(bstring_1, "c e");
 
-    // // print
-    // bstring_1.Print();
+    bstring_1.Print();
   } catch (...) {
   }
 }
