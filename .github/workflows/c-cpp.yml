@@ -1,10 +1,12 @@
-name: C/C++ CI
+name: 테스트 실행
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - master
   pull_request:
-    branches: [ master ]
+    branches:
+      - "**"
 
 jobs:
   build:
@@ -12,12 +14,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    
+    - name: Checkout code
     - uses: actions/checkout@v2
-    - name: configure
-      run: ./configure
+
     - name: make
       run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
