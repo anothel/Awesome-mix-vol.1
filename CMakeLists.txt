@@ -37,12 +37,12 @@ add_subdirectory(lib)
 #   add_test(test-1 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Awesome_mix_vol_1_test)
 #   add_test(test-2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Awesome_mix_vol_1_test)
 # endif()
-  add_subdirectory(tests)
+add_subdirectory(tests)
   
-  include(CTest)
+include(CTest)
   
-  add_test(test-1 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Awesome_mix_vol_1_test)
-  add_test(test-2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Awesome_mix_vol_1_test)
+add_test(test-1 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Awesome_mix_vol_1_test)
+add_test(test-2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Awesome_mix_vol_1_test)
 
 message(STATUS "Compiler")
 message(STATUS " - ID       \t: ${CMAKE_CXX_COMPILER_ID}")
