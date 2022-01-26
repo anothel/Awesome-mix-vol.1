@@ -173,10 +173,10 @@ class CSimpleStringT {
     pData->Release();
   }
 
-  operator CSimpleStringT<BaseType>&() {
-    
-    return *(CSimpleStringT<BaseType>*)this;
-  }
+  // operator CSimpleStringT<BaseType>&() {
+  //   std::cout << __FILE__ << " | " << __LINE__ << std::endl;
+  //   return *(CSimpleStringT<BaseType>*)this;
+  // }
 
   CSimpleStringT& operator=(_In_ const CSimpleStringT& strSrc) {
     
