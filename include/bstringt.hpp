@@ -3,8 +3,8 @@
 #ifndef BSTRINGT_H_
 #define BSTRINGT_H_
 
-#include "include/amvalloc.h"
-#include "include/amvcore.h"
+#include "include/amvalloc.hpp"
+#include "include/amvcore.hpp"
 #include "salieri-src/salieri.h"
 
 namespace AMV {

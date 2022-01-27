@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-#include "include/amvstr.h"
+#include "include/amvstr.hpp"
 #include "include/b.h"
 
 TEST(Inheriting_from_a_template, test1) { AAA<int> aaa(1); }
