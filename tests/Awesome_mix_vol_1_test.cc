@@ -7,11 +7,12 @@
 #include <string>
 
 #include "include/amvstr.hpp"
+#include "include/CAira.hpp"
 #include "include/b.hpp"
 
-TEST(Inheriting_from_a_template, test1) { AAA<int> aaa(1); }
+TEST(Inheriting_from_a_template, test1) { CAAA<int> aaa(1); }
 
-TEST(Inheriting_from_a_template, test2) { BBB<int> bbb(2); }
+TEST(Inheriting_from_a_template, test2) { CBBB<int> bbb(2); }
 
 char szDest[100];
 const char* szSrc = "This is source";
@@ -20,7 +21,7 @@ char szTestStr[] = "This is test | This is test | ";
 char szTestStrDel[] = "Thistest | This is test | ";
 const char* szTestStrAA = "This is test | This is test | AA";
 char sztestStringAA[] = "this is test | This is test | AA";
- 
+
 TEST(BStringT, construct) {
   BString bstring1;
 
@@ -100,7 +101,6 @@ TEST(BStringT, func) {
     ASSERT_EQ(bstring_1, "c e");
 
     bstring_1.Print();
-
   } catch (...) {
   }
 }
@@ -166,8 +166,8 @@ TEST(_Func_UnitTest, CSimpleStringT) {
     // static AMV::CAmvHeap strHeap;
     // bstring.SetManager(bstring.GetManager());
 
-    bstring.SetString("AAA");
-    ASSERT_EQ(memcmp(bstring.GetBuffer(), "AAA", strlen("AAA")), S_OK);
+    bstring.SetString("CAAA");
+    ASSERT_EQ(memcmp(bstring.GetBuffer(), "CAAA", strlen("CAAA")), S_OK);
   } catch (...) {
   }
 }
@@ -175,3 +175,8 @@ TEST(_Func_UnitTest, CSimpleStringT) {
 TEST(BStringTest1, test3) { BString bstring; }
 
 TEST(ByteStringTest2, RectangleSize_false) {}
+
+TEST(AriaTest, aria) {
+  Awesome_mix_vol_1::CAria a;
+  a.ARIA_test();
+}

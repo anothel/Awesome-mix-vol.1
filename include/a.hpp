@@ -6,11 +6,11 @@
 #include <iostream>
 
 template <typename T>
-class AAA {
+class CAAA {
  public:
-  explicit AAA(T a) : a_(a) { Print(); }
+  explicit CAAA(T a) : a_(a) { Print(); }
 
-  virtual ~AAA() { std::cout << "~AAA" << std::endl; }
+  virtual ~CAAA() { std::cout << "~CAAA" << std::endl; }
 
  protected:
   void Print() { std::cout << __FILE__ << "(" << __LINE__ << ")" << std::endl; }

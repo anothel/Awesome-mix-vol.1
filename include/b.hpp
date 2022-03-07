@@ -6,10 +6,10 @@
 #include "include/a.hpp"
 
 template <typename U>
-class BBB : public AAA<U> {
+class CBBB : public CAAA<U> {
  public:
-  explicit BBB(U b) throw() : AAA<U>(b), b_(b) { Print(); }
-  ~BBB() { std::cout << "~BBB" << std::endl; }
+  explicit CBBB(U b) throw() : CAAA<U>(b), b_(b) { Print(); }
+  ~CBBB() { std::cout << "~CBBB" << std::endl; }
 
  protected:
   void Print() { std::cout << __FILE__ << "(" << __LINE__ << ")" << std::endl; }

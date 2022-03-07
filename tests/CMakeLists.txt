@@ -20,7 +20,7 @@ add_executable(Awesome_mix_vol_1_test ${SRC_FILES})
  
 target_compile_features(Awesome_mix_vol_1_test PRIVATE cxx_std_11)
 
-target_link_libraries(Awesome_mix_vol_1_test PRIVATE gtest gmock gtest_main)
+target_link_libraries(Awesome_mix_vol_1_test PRIVATE gtest gmock gtest_main CAria)
 
 target_include_directories(Awesome_mix_vol_1_test PRIVATE ${CMAKE_SOURCE_DIR} ${FETCHCONTENT_BASE_DIR})
 

@@ -3,16 +3,18 @@ file(GLOB_RECURSE SRC_FILES CONFIGURE_DEPENDS
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cc
 )
 
-add_library(aria SHARED ${SRC_FILES})
+add_library(CAria SHARED ${SRC_FILES})
 
-# aria 의 include 경로 지정
-target_include_directories(aria PUBLIC ${CMAKE_SOURCE_DIR})
+# CAria 의 include 경로 지정
+target_include_directories(CAria PUBLIC ${CMAKE_SOURCE_DIR} fmt)
 
-# aria 의 컴파일 옵션 지정
-target_compile_options(aria PRIVATE -Wall -Werror)
+# CAria 의 컴파일 옵션 지정
+target_compile_options(CAria PRIVATE -Wall -Werror)
 
-# aria 를 C++ 11 로 컴파일
-target_compile_features(aria PRIVATE cxx_std_11)
+target_compile_definitions(CAria PUBLIC _LITTLE_ENDIAN_)
+
+# CAria 를 C++ 11 로 컴파일
+target_compile_features(CAria PRIVATE cxx_std_11)
 
 # FetchContent 를 사용하기 위해 include.
 include(FetchContent)
@@ -25,5 +27,5 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Fmt)
 
-# aria 에 링크
-target_link_libraries(aria PRIVATE fmt)
+# CAria 에 링크
+target_link_libraries(CAria PRIVATE fmt)
