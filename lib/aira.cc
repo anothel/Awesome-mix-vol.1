@@ -1,6 +1,4 @@
-// Copyright
-
-// #include "include/ByteString.h"
+// Copyright 2021~2022 `anothel` All rights reserved
 
 // #include <fmt/core.h>
 
