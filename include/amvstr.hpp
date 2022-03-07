@@ -1,7 +1,7 @@
-// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+// Copyright 2021~2022 `anothel` All rights reserved
 
-#ifndef AMVSTR_H_
-#define AMVSTR_H_
+#ifndef AMVSTR_HPP_
+#define AMVSTR_HPP_
 
 #include <cctype>
 #include <cstring>
@@ -330,4 +330,4 @@ typedef BStringT<char, StrTraitAMV<char> > CAmvString;
 }  // namespace AMV
 typedef AMV::CAmvString BString;
 
-#endif  // AMVSTR_H_
+#endif  // AMVSTR_HPP_

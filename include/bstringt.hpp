@@ -1,7 +1,7 @@
-// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+// Copyright 2021~2022 `anothel` All rights reserved
 
-#ifndef BSTRINGT_H_
-#define BSTRINGT_H_
+#ifndef BSTRINGT_HPP_
+#define BSTRINGT_HPP_
 
 #include "include/amvalloc.hpp"
 #include "include/amvcore.hpp"
@@ -749,4 +749,4 @@ class BStringT : public CSimpleStringT<BaseType> {
 
 }  // namespace AMV
 
-#endif  // BSTRINGT_H_
+#endif  // BSTRINGT_HPP_

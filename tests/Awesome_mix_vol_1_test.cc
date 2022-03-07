@@ -1,4 +1,4 @@
-// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+// Copyright 2021~2022 `anothel` All rights reserved
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -7,7 +7,7 @@
 #include <string>
 
 #include "include/amvstr.hpp"
-#include "include/b.h"
+#include "include/b.hpp"
 
 TEST(Inheriting_from_a_template, test1) { AAA<int> aaa(1); }
 

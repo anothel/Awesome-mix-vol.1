@@ -1,7 +1,7 @@
-// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+// Copyright 2021~2022 `anothel` All rights reserved
 
-#ifndef AMVDEFINE_H_
-#define AMVDEFINE_H_
+#ifndef AMVDEFINE_HPP_
+#define AMVDEFINE_HPP_
 
 #ifdef __GNUC__
 #define __interface class
@@ -70,4 +70,4 @@ typedef ULONG_PTR DWORD_PTR, *PDWORD_PTR;
 
 #define log1 printf("[jpk] %s(%d), %s \n", __FILE__, __LINE__, __func__);
 
-#endif  // AMVDEFINE_H_
+#endif  // AMVDEFINE_HPP_

@@ -1,7 +1,7 @@
-// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+// Copyright 2021~2022 `anothel` All rights reserved
 
-#ifndef AMVALLOC_H_
-#define AMVALLOC_H_
+#ifndef AMVALLOC_HPP_
+#define AMVALLOC_HPP_
 
 #include <climits>
 
@@ -126,4 +126,4 @@ inline int64_t AmvMultiply(_Out_ uint64_t *piResult, _In_ uint64_t iLeft,
 
 }  // namespace AMV
 
-#endif  // AMVALLOC_H_
+#endif  // AMVALLOC_HPP_

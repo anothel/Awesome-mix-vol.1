@@ -22,21 +22,10 @@ set(CMAKE_VERBOSE_MAKEFILE true)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # # set install directory
-# set(INSTALL_HOME "/usr/local/MagicDB/")
+# set(INSTALL_HOME "/path/to/install")
 
 # 확인할 디렉토리 추가
 add_subdirectory(lib)
-
-# # Options. Turn on with 'cmake -Dmyvarname=ON'.
-# option(_TEST "Build all tests." OFF) # Makes boolean '_TEST' available.
-# if(_TEST)
-#   add_subdirectory(tests)
-  
-#   include(CTest)
-  
-#   add_test(test-1 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Awesome_mix_vol_1_test)
-#   add_test(test-2 ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/Awesome_mix_vol_1_test)
-# endif()
 add_subdirectory(tests)
   
 include(CTest)

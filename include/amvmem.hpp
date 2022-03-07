@@ -1,7 +1,7 @@
-// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+// Copyright 2021~2022 `anothel` All rights reserved
 
-#ifndef AMVMEM_H_
-#define AMVMEM_H_
+#ifndef AMVMEM_HPP_
+#define AMVMEM_HPP_
 
 #include <malloc.h>
 
@@ -64,4 +64,4 @@ class CAmvHeap : public IAmvMemMgr {
 };
 }  // namespace AMV
 
-#endif  // AMVMEM_H_
+#endif  // AMVMEM_HPP_

@@ -1,6 +1,11 @@
+// Copyright 2021~2022 `anothel` All rights reserved
+
+#ifndef AMVCORE_HPP_
+#define AMVCORE_HPP_
+
 #include "include/amvdefine.hpp"
 
-namespace {
+namespace AMV {
 
 /////////////////////////////////////////////////////////////////////////////
 // Verify that a null-terminated string points to valid memory
@@ -30,7 +35,9 @@ inline const CharType* AmvstrchrT(_In_z_ const CharType* p,
     p = AmvCharNext(p);
   }
   // strchr for '\0' should succeed - the while loop terminates
-  //*p == 0, but ch also == 0, so NULL terminator address is returned
+  // *p == 0, but ch also == 0, so NULL terminator address is returned
   return (*p == ch) ? p : NULL;
 }
-}  // namespace
+}  // namespace AMV
+
+#endif  // AMVCORE_HPP_
