@@ -1,7 +1,7 @@
-// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+// Copyright 2021~2022 `anothel` All rights reserved
 
-#ifndef A_H_
-#define A_H_
+#ifndef A_HPP_
+#define A_HPP_
 
 #include <iostream>
 
@@ -19,4 +19,4 @@ class AAA {
   T a_;
 };
 
-#endif  // A_H_
+#endif  // A_HPP_

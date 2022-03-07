@@ -1,14 +1,14 @@
-// Copyright ⓒ2022 AWESOME-MIX-VOL.1 Co.,Ltd. All rights reserved
+// Copyright 2021~2022 `anothel` All rights reserved
 
-#ifndef B_H_
-#define B_H_
+#ifndef B_HPP_
+#define B_HPP_
 
-#include "include/a.h"
+#include "include/a.hpp"
 
 template <typename U>
 class BBB : public AAA<U> {
  public:
-  BBB(U b) throw() : AAA<U>(b), b_(b) { Print(); }
+  explicit BBB(U b) throw() : AAA<U>(b), b_(b) { Print(); }
   ~BBB() { std::cout << "~BBB" << std::endl; }
 
  protected:
@@ -18,4 +18,4 @@ class BBB : public AAA<U> {
   U b_;
 };
 
-#endif  // B_H_
+#endif  // B_HPP_
