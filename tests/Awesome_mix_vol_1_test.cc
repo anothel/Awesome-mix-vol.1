@@ -172,7 +172,12 @@ TEST(_Func_UnitTest, CSimpleStringT) {
   }
 }
 
-TEST(BStringTest1, test3) { BString bstring; }
+TEST(BStringTest1, test3) {
+  BString bstring1("a");
+  BString bstring2("b");
+  std::cout << bstring2 + 'A' << " \n";
+  std::cout << 'A' + bstring1 << " \n";
+}
 
 TEST(ByteStringTest2, RectangleSize_false) {}
 

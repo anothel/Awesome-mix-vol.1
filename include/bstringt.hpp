@@ -616,12 +616,10 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (strResult);
   }
 
-#define _CSTRING_CHAR_T char
-
   friend BStringT operator+(_In_ const BStringT& str1,
-                            _In_ _CSTRING_CHAR_T ch2) {
+                            _In_ char ch2) {
     BStringT strResult(str1.GetManager());
-    char chTemp = char(ch2);
+    char chTemp = static_cast<char>(ch2);
 
     CThisSimpleString::Concatenate(strResult, str1, str1.GetLength(), &chTemp,
                                    1);
@@ -629,10 +627,10 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (strResult);
   }
 
-  friend BStringT operator+(_In_ _CSTRING_CHAR_T ch1,
+  friend BStringT operator+(_In_ char ch1,
                             _In_ const BStringT& str2) {
     BStringT strResult(str2.GetManager());
-    char chTemp = char(ch1);
+    char chTemp = static_cast<char>(ch1);
 
     CThisSimpleString::Concatenate(strResult, &chTemp, 1, str2,
                                    str2.GetLength());

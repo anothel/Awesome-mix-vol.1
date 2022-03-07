@@ -306,7 +306,9 @@ void CAria::ARIA_test() {
     printf("We are on _LITTLE_ENDIAN_ platform.\n");
 #ifdef _BIG_ENDIAN_
     printf("WARNING: _BIG_ENDIAN_ defined on _LITTLE_ENDIAN_ platform.\n");
-    printf("         You should define _LITTLE_ENDIAN_ instead of _BIG_ENDIAN_.\n");
+    printf(
+        "         You should define _LITTLE_ENDIAN_ instead of "
+        "_BIG_ENDIAN_.\n");
 #else
     printf("Okay.  You were correct.\n");
 #endif
@@ -314,7 +316,9 @@ void CAria::ARIA_test() {
     printf("We are on _BIG_ENDIAN_ platform.\n");
 #ifdef _LITTLE_ENDIAN_
     printf("WARNING: _LITTLE_ENDIAN_ defined on _BIG_ENDIAN_ platform.\n");
-    printf("         You should define _BIG_ENDIAN_ instead of _LITTLE_ENDIAN_.\n");
+    printf(
+        "         You should define _BIG_ENDIAN_ instead of "
+        "_LITTLE_ENDIAN_.\n");
 #else
     printf("Okay.  You were correct.\n");
 #endif

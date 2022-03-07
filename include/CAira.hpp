@@ -1,7 +1,7 @@
 // Copyright 2021~2022 `anothel` All rights reserved
 
-#ifndef ARIA_HPP_
-#define ARIA_HPP_
+#ifndef CARIA_HPP_
+#define CARIA_HPP_
 
 typedef unsigned char Byte;
 typedef unsigned int Word;
@@ -272,4 +272,4 @@ class CAria {
 };
 }  // namespace Awesome_mix_vol_1
 
-#endif  // ARIA_HPP_
+#endif  // CARIA_HPP_

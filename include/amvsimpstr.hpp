@@ -153,7 +153,6 @@ class CSimpleStringT {
 
   CSimpleStringT(_In_reads_(nLength) const unsigned char* puchSrc,
                  _In_ int nLength, _Inout_ IAmvStringMgr* pStringMgr) {
-    
     AMVENSURE(pStringMgr != NULL);
 
     if (puchSrc == NULL && nLength != 0) AmvThrow("Invalid arguments");
@@ -179,7 +178,6 @@ class CSimpleStringT {
   // }
 
   CSimpleStringT& operator=(_In_ const CSimpleStringT& strSrc) {
-    
     BStringData* pSrcData = strSrc.GetData();
     BStringData* pOldData = GetData();
     if (pSrcData != pOldData) {
@@ -197,7 +195,6 @@ class CSimpleStringT {
   }
 
   CSimpleStringT& operator=(_In_opt_z_ const char* pszSrc) {
-    
     SetString(pszSrc);
 
     return (*this);
@@ -242,17 +239,14 @@ class CSimpleStringT {
 
   // Todo(jpk, 20220118): 아직도 이 부분 왜 다른지 전혀 모르겠음
   // operator char*() const throw() {
-    
   //   return (m_pszData);
   // }
 
   operator const char*() const throw() {
-    
     return const_cast<const char *>(m_pszData);
   }
 
   // operator const void*() const throw() {
-    
   //   return reinterpret_cast<const void *>(m_pszData);
   // }
 
@@ -546,7 +540,7 @@ log1;
   }
 
  protected:
- // Todo(jpk, 20200118): strResult는 const가 붙으면 안됨? 뭘 수정하는 게 있나?
+  // Todo(jpk, 20200118): strResult는 const가 붙으면 안됨? 뭘 수정하는 게 있나?
   static void __cdecl Concatenate(_Inout_ CSimpleStringT& strResult,
                                   _In_reads_(nLength1) const char* psz1,
                                   _In_ int nLength1,
