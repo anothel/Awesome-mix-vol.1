@@ -265,10 +265,10 @@ class CSimpleStringT {
     UINT_PTR nOffset = pszSrc - GetString();
 
     UINT nOldLength = GetLength();
-    if (nOldLength < 0) {
-      // protects from underflow
-      nOldLength = 0;
-    }
+    // if (nOldLength < 0) {
+    //   // protects from underflow
+    //   nOldLength = 0;
+    // }
 
     // Make sure the nLength is greater than zero
     AMVENSURE_THROW(nLength >= 0, "Invalid arguments");
