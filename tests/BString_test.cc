@@ -7,12 +7,6 @@
 #include <string>
 
 #include "include/amvstr.hpp"
-#include "include/CAira.hpp"
-#include "include/b.hpp"
-
-TEST(Inheriting_from_a_template, test1) { CAAA<int> aaa(1); }
-
-TEST(Inheriting_from_a_template, test2) { CBBB<int> bbb(2); }
 
 char szDest[100];
 const char* szSrc = "This is source";
@@ -22,7 +16,7 @@ char szTestStrDel[] = "Thistest | This is test | ";
 const char* szTestStrAA = "This is test | This is test | AA";
 char sztestStringAA[] = "this is test | This is test | AA";
 
-TEST(BStringT, construct) {
+TEST(BString, construct_test) {
   BString bstring1;
 
   std::string sTest("This is test | This is test | AA");
@@ -33,7 +27,7 @@ TEST(BStringT, construct) {
   BString bstring3(uszTest, sizeof(uszTest));
 }
 
-TEST(BStringT, func) {
+TEST(BString, func_test) {
   try {
     std::string sTest("This is test | This is test | AA");
     BString bstring(sTest.c_str());
@@ -105,7 +99,7 @@ TEST(BStringT, func) {
   }
 }
 
-TEST(_Func_UnitTest, CSimpleStringT) {
+TEST(BString, CSimpleStringT_test) {
   try {
     BString bstring;
 
@@ -172,16 +166,9 @@ TEST(_Func_UnitTest, CSimpleStringT) {
   }
 }
 
-TEST(BStringTest1, test3) {
+TEST(BString, operator_plus_test) {
   BString bstring1("a");
   BString bstring2("b");
   std::cout << bstring2 + 'A' << " \n";
   std::cout << 'A' + bstring1 << " \n";
-}
-
-TEST(ByteStringTest2, RectangleSize_false) {}
-
-TEST(AriaTest, aria) {
-  Awesome_mix_vol_1::CAria a;
-  a.ARIA_test();
 }
