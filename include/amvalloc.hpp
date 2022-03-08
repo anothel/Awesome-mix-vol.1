@@ -6,6 +6,7 @@
 #include <climits>
 
 #include "include/amvdefine.hpp"
+#include "salieri-src/salieri.h"
 
 namespace AMV {
 

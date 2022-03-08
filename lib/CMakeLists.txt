@@ -14,7 +14,7 @@ target_compile_options(CAria PRIVATE -Wall -Werror)
 target_compile_definitions(CAria PUBLIC _LITTLE_ENDIAN_)
 
 # CAria 를 C++ 11 로 컴파일
-target_compile_features(CAria PRIVATE cxx_std_11)
+target_compile_features(CAria PRIVATE cxx_std_17)
 
 # FetchContent 를 사용하기 위해 include.
 include(FetchContent)

@@ -6,10 +6,10 @@
 #include <cctype>
 #include <cstring>
 
+#include "include/BStringt.hpp"
 #include "include/amvdefine.hpp"
 #include "include/amvmem.hpp"
 #include "include/amvsimpstr.hpp"
-#include "include/bstringt.hpp"
 
 namespace AMV {
 

@@ -10,11 +10,9 @@ typedef unsigned int Word;
 #undef _LITTLE_ENDIAN_
 #else
 #ifndef _LITTLE_ENDIAN_
-#error In order to compile this, you have to  \
-  define either _LITTLE_ENDIAN_ or _BIG_ENDIAN_.  \
-  If unsure, try define either of one and run \
-  checkEndian() function to see if your guess \
-  is correct.
+#error In order to compile this, you have to define either _LITTLE_ENDIAN_ or \
+_BIG_ENDIAN_. If unsure, try define either of one, then run CHECK_ENDIAN() \
+function to see if your guess is correct.
 #endif
 #endif
 
@@ -260,12 +258,12 @@ namespace Awesome_mix_vol_1 {
 
 class CAria {
  public:
+  static void CHECK_ENDIAN();
   void Crypt(const Byte *i, int Nr, const Byte *rk, Byte *o);
   int EncKeySetup(const Byte *mk, Byte *rk, int keyBits);
   int DecKeySetup(const Byte *mk, Byte *rk, int keyBits);
   void printBlockOfLength(Byte *b, int len);
   void printBlock(Byte *b);
-  void ARIA_test();
 
  protected:
  private:

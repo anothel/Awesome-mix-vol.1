@@ -38,10 +38,12 @@
 
 /*********************************************************/
 
-#include <fmt/core.h>
-#include <stdio.h>
+#include "include/CAria.hpp"
 
-#include "include/CAira.hpp"
+#include <fmt/core.h>
+
+#include <cstdio>
+#include <cstdlib>
 
 namespace Awesome_mix_vol_1 {
 
@@ -63,7 +65,7 @@ void CAria::printBlock(Byte *b) { printBlockOfLength(b, 16); }
  * Byte *o: 출력
  */
 void CAria::Crypt(const Byte *i, int Nr, const Byte *rk, Byte *o) {
-  register Word t0, t1, t2, t3;
+  Word t0, t1, t2, t3;
 
   WordLoad(WO(const_cast<Byte *>(i), 0), t0);
   WordLoad(WO(const_cast<Byte *>(i), 1), t1);
@@ -125,9 +127,10 @@ void CAria::Crypt(const Byte *i, int Nr, const Byte *rk, Byte *o) {
  * const Byte *mk: 마스터 키
  * Byte *rk: 라운드 키
  * int keyBits: 마스터 키의 길이
+ * return: 라운드 수
  */
 int CAria::EncKeySetup(const Byte *mk, Byte *rk, int keyBits) {
-  register Word t0, t1, t2, t3;
+  Word t0, t1, t2, t3;
   Word w0[4], w1[4], w2[4], w3[4];
   int q, r;
 
@@ -210,6 +213,7 @@ int CAria::EncKeySetup(const Byte *mk, Byte *rk, int keyBits) {
     GSRK(w3, w0, 97);
     GSRK(w0, w1, 109);
   }
+
   return (keyBits + 256) / 32;
 }
 
@@ -219,31 +223,28 @@ int CAria::EncKeySetup(const Byte *mk, Byte *rk, int keyBits) {
  * int keyBits: 마스터 키의 길이
  */
 int CAria::DecKeySetup(const Byte *mk, Byte *rk, int keyBits) {
-  Word *a, *z;
-  int rValue;
-#if defined(_MSC_VER)
-  register Word w;
-#else
-  // register Byte sum;
-#endif
-  register Word t0, t1, t2, t3;
+  int rValue = EncKeySetup(mk, rk, keyBits);
+  Word *a = reinterpret_cast<Word *>((rk));
+  Word *z = a + rValue * 4;
+
+  Word t0, t1, t2, t3;
   Word s0, s1, s2, s3;
 
-  rValue = EncKeySetup(mk, rk, keyBits);
-  a = reinterpret_cast<Word *>((rk));
-  z = a + rValue * 4;
   t0 = a[0];
   t1 = a[1];
   t2 = a[2];
   t3 = a[3];
+
   a[0] = z[0];
   a[1] = z[1];
   a[2] = z[2];
   a[3] = z[3];
+
   z[0] = t0;
   z[1] = t1;
   z[2] = t2;
   z[3] = t3;
+
   a += 4;
   z -= 4;
 
@@ -269,11 +270,14 @@ int CAria::DecKeySetup(const Byte *mk, Byte *rk, int keyBits) {
     z[2] = s2;
     z[3] = s3;
   }
+
   WordM1(a[0], t0);
   WordM1(a[1], t1);
   WordM1(a[2], t2);
   WordM1(a[3], t3);
+
   MM(t0, t1, t2, t3) P(t0, t1, t2, t3) MM(t0, t1, t2, t3) z[0] = t0;
+
   z[1] = t1;
   z[2] = t2;
   z[3] = t3;
@@ -281,27 +285,15 @@ int CAria::DecKeySetup(const Byte *mk, Byte *rk, int keyBits) {
   return rValue;
 }
 
-/* ARIA_test(): 기본적인 테스트를 위한 함수로,
- * 주된 목적은 구현 정확성 검증이라기보다는 제대로 포팅이
- * 이루어졌나 기본적인 확인을 위한 것임.  흔하지
- * 않은 환경으로 포팅했을 경우에는 이 테스트 결과에
- * 만족할 것이 아니라 reference 코드의 결과와 비교하여
- * 충분한 구현 정확성 검증을 거칠 것을 권고함.
- */
-void CAria::ARIA_test() {
-  Byte rk[16 * 17], c[16], *b, mk[32];
-  int i, flag;
+void CAria::CHECK_ENDIAN() {
   const Word NUMBER = 0x00000042;
-  Byte p[16] = {0x11, 0x11, 0x11, 0x11, 0xaa, 0xaa, 0xaa, 0xaa,
-                0x11, 0x11, 0x11, 0x11, 0xbb, 0xbb, 0xbb, 0xbb};
-  const Byte cryptResult[] = {0x8d, 0x14, 0x70, 0x62, 0x5f, 0x59, 0xeb, 0xac,
-                              0xb0, 0xe5, 0x5b, 0x53, 0x4b, 0x3e, 0x46, 0x2b};
+  Byte *b = reinterpret_cast<Byte *>(const_cast<Word *>(&NUMBER));
 
   printf("BEGIN testing endianness...\n");
   printf(
-      "Since you are running this, it means that you have defined \n either "
+      "Since you are running this, it means that you have defined \neither "
       "_LITTLE_ENDIAN_ or _BIG_ENDIAN_. Let's see if you were correct.\n");
-  b = reinterpret_cast<Byte *>(const_cast<Word *>(&NUMBER));
+
   if (b[0] == 0x42) {
     printf("We are on _LITTLE_ENDIAN_ platform.\n");
 #ifdef _BIG_ENDIAN_
@@ -309,6 +301,7 @@ void CAria::ARIA_test() {
     printf(
         "         You should define _LITTLE_ENDIAN_ instead of "
         "_BIG_ENDIAN_.\n");
+    exit(1);
 #else
     printf("Okay.  You were correct.\n");
 #endif
@@ -319,71 +312,14 @@ void CAria::ARIA_test() {
     printf(
         "         You should define _BIG_ENDIAN_ instead of "
         "_LITTLE_ENDIAN_.\n");
+    exit(1);
 #else
     printf("Okay.  You were correct.\n");
 #endif
   }
+
   printf("END   testing endianness.\n\n");
-
-  for (i = 0; i < 16; i++) mk[i] = i * 0x11;
-  for (i = 16; i < 24; i++) mk[i] = (i - 16) * 0x11;
-
-  Crypt(p, EncKeySetup(mk, rk, 192), rk, c);
-  printf("BEGIN testing basic encryption...\n");
-  printf(
-      "Testing whether the encryption would come out correctly, for 14-round "
-      "ARIA.\n");
-  printf("key      : ");
-  printBlockOfLength(mk, 24);
-  printf("\n");
-  printf("plaintext: ");
-  printBlock(p);
-  printf("\n");
-  printf("result is: ");
-  printBlock(c);
-  printf("\n");
-  printf("should be: ");
-  printBlock(const_cast<Byte *>(cryptResult));
-  printf("\n");
-  flag = 0;
-  for (i = 0; i < 16; i++)
-    if (c[i] != cryptResult[i]) flag = 1;
-  if (flag == 1)
-    printf("The result is incorrect!\n");
-  else
-    printf("Okay.  The result is correct.\n");
-  printf("END   testing basic encryption.\n\n");
-
-  for (i = 0; i < 32; i++) mk[i] = 0;
-
-  for (i = 0; i < 16; i++) p[i] = 0;
-
-  printf("BEGIN testing the roundtrip...\n");
-  printf(
-      "For key size of 192 bits, starting with the zero plaintext and the zero "
-      "key, let's see if we may recover the plaintext by decrypting the "
-      "encrypted ciphertext.\n");
-  EncKeySetup(mk, rk, 192);
-  printf("plaintext : ");
-  printBlock(p);
-  printf("\n");
-  Crypt(p, 14, rk, c);
-  printf("ciphertext: ");
-  printBlock(c);
-  printf("\n");
-  DecKeySetup(mk, rk, 192);
-  Crypt(c, 14, rk, p);
-  printf("decrypted : ");
-  printBlock(p);
-  printf("\n");
-  flag = 0;
-  for (i = 0; i < 16; i++)
-    if (p[i] != 0) flag = 1;
-  if (flag == 1)
-    printf("The result is incorrect!\n");
-  else
-    printf("Okay.  The result is correct.\n");
-  printf("END   testing the roundtrip.\n");
+  return;
 }
 
 }  // namespace Awesome_mix_vol_1

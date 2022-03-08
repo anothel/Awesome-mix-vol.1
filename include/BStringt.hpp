@@ -5,6 +5,7 @@
 
 #include "include/amvalloc.hpp"
 #include "include/amvcore.hpp"
+#include "include/amvsimpstr.hpp"
 #include "salieri-src/salieri.h"
 
 namespace AMV {
@@ -616,24 +617,18 @@ class BStringT : public CSimpleStringT<BaseType> {
     return (strResult);
   }
 
-  friend BStringT operator+(_In_ const BStringT& str1,
-                            _In_ char ch2) {
+  friend BStringT operator+(_In_ const BStringT& str1, _In_ char ch2) {
     BStringT strResult(str1.GetManager());
-    char chTemp = static_cast<char>(ch2);
 
-    CThisSimpleString::Concatenate(strResult, str1, str1.GetLength(), &chTemp,
-                                   1);
+    CThisSimpleString::Concatenate(strResult, str1, str1.GetLength(), &ch2, 1);
 
     return (strResult);
   }
 
-  friend BStringT operator+(_In_ char ch1,
-                            _In_ const BStringT& str2) {
+  friend BStringT operator+(_In_ char ch1, _In_ const BStringT& str2) {
     BStringT strResult(str2.GetManager());
-    char chTemp = static_cast<char>(ch1);
 
-    CThisSimpleString::Concatenate(strResult, &chTemp, 1, str2,
-                                   str2.GetLength());
+    CThisSimpleString::Concatenate(strResult, &ch1, 1, str2, str2.GetLength());
 
     return (strResult);
   }
