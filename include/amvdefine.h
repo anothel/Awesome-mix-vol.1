@@ -17,7 +17,7 @@
 #define _AMV_INSECURE_DEPRECATE(s)
 #define AmvThrow throw
 #define __declspec(s)
-#endif  // __GNUC__
+#endif // __GNUC__
 
 #ifdef _AMV_DISABLE_NOINLINE
 #define AMV_NOINLINE
@@ -27,7 +27,7 @@
 
 #ifndef _WIN32
 #define CSTRING_EXPLICIT explicit
-#endif  // _WIN32
+#endif // _WIN32
 
 typedef uint16_t WORD;
 
@@ -66,8 +66,8 @@ typedef ULONG_PTR DWORD_PTR, *PDWORD_PTR;
 
 #ifndef _WIN32
 #define CSTRING_EXPLICIT explicit
-#endif  // _WIN32
+#endif // _WIN32
 
 #define log1 printf("[jpk] %s(%d), %s \n", __FILE__, __LINE__, __func__);
 
-#endif  // AMVDEFINE_H_
+#endif // AMVDEFINE_H_
