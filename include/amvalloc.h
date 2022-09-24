@@ -9,7 +9,6 @@
 
 namespace AMV
 {
-
     template <typename T>
     class AmvLimits;
 
